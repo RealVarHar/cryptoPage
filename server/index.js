@@ -1,5 +1,6 @@
 import process from 'node:process';
 import fastify from 'fastify';
+import fs from 'fs';
 var arg={};
 for(let i=2;i<process.argv.length;i++) {
     if(process.argv[i][0]=="-") {
@@ -29,11 +30,13 @@ app.addHook('preHandler',async (req,res) => {
 });
 app.post('/app',async (req,res) => {
     res.statusCode=200;
-    res.send();
+    res.header('content-type', 'text/html; charset=utf-8');
+    res.send(await fs.promises.readFile('server/index.html',{encoding:'utf8'}));
 });
 app.get('/app',async (req,res) => {
     res.statusCode=200;
-    res.send();
+    res.header('content-type', 'text/html; charset=utf-8');
+    res.send(await fs.promises.readFile('server/index.html',{encoding:'utf8'}));
 });
 //default routes. keep at the end of the route definitions
 app.all('*',(req,res) => {
