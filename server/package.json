@@ -1,0 +1,20 @@
+{
+    "type": "module",
+    "name": "cryptopage",
+    "version": "1.0.0",
+    "dependencies": {
+        "@fastify/compress": "^6.1.0",
+        "@fastify/formbody": "^7.0.1",
+        "fast-xml-parser": "^4.0.9",
+        "fastify": "^4.3.0",
+        "fastify-qs": "^4.0.0",
+        "fastify-xml-body-parser": "^2.1.1"
+    },
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
+}
