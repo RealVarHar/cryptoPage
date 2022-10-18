@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-light {
+    background-color: #EEEEEE;
+}
+
+.bg-dark {
+    background-color: #222831;
+}
+
+.test {
+    background-color: #222831;
+    background-color: #393E46;
+    background-color: #14B8A6;
+    background-color: #EEEEEE;
+    background-color: #FFD700;
+}
+
+.bg-button {
+    background-color: #FFD700;
+}
