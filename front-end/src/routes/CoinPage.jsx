@@ -3,6 +3,7 @@ import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { useParams } from 'react-router-dom'
+import Chart from '../components/Chart'
 
 const CoinPage = () => {
   const [coin, setCoin] = useState({})
@@ -24,6 +25,10 @@ const CoinPage = () => {
         <div>
           <img src={coin.image?.large} alt='/'/>
           <p>{coin.name}</p>
+        </div>
+        <div>
+          <p>About</p>
+          {coin.description.en}
         </div>
       </div>
       <Footer />
