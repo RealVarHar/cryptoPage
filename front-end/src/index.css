@@ -23,18 +23,18 @@
     --color-bg-primary: #222831;
     --color-bg-secondary: #aaaaaa;
     --color-text-primary: #dbdbdb;
-    --color-text-secondary: #898989;
+    --color-text-secondary: #14B8A6;
     --color-text-accent: #14B8A6;
     --color-bg-input: #aaaaaa;
-    --color-bg-button: #81e6d9;
+    --color-bg-button: #FFD700;
 }
   
 .light {
     --color-bg-primary: #e6f1f2;
     --color-bg-secondary: #aaaaaa;
     --color-text-primary: #2d3748;
-    --color-text-secondary: #a0a0a0;
+    --color-text-secondary: #14B8A6;
     --color-text-accent: #2b6cb0;
     --color-bg-input: #edf2f7;
-    --color-bg-button: #2b6cb0;
+    --color-bg-button: #14B8A6;
 }

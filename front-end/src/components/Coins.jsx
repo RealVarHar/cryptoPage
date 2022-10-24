@@ -64,7 +64,7 @@ const Coins = () => {
                         <img className='px-2' src={coin.image} alt={coin.id} width="50" />
                         <div className='flex flex-col justify-center'>
                           <p className='font-semibold'>{coin.name}</p>
-                          <p className='text-secondary'>{coin.symbol.toUpperCase()}</p>
+                          <p className='text-[#949494]'>{coin.symbol.toUpperCase()}</p>
                         </div>
                       </div>
                     </Link>
@@ -116,7 +116,7 @@ const Coins = () => {
             ))}
         </tbody>
       </table>
-  );
+  )
 
   return (
     <div className='my-8 rounded-div'>

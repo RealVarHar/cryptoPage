@@ -1,46 +1,81 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
 import logo from '../images/logo.png'
 
 const Login = () => {
-  return (
-    <div className='min-h-screen flex flex-col p-3'>
-        <div className='flex flex-grow justify-center items-center'>
-            <div className='border border-secondary shadow-[#aaaaaa] p-4 rounded-2xl shadow-sm bg-primary'>
-                <div className=''>
-                    <img src={logo} alt="Logo" ></img>
-                </div>
-            </div>
-        </div>
+    const [isLogin, setIsLogin] = useState(true);
 
-
-{/*
-        <div className="grid content-center justify-items-center pb-10 flex-grow">
-            <div class="pb-10">
-                <img src={logo} alt="Logo" width="300"></img>
-            </div>
-            <div class="pt-8">
-                <form class="flex flex-col text-3xl font-medium">
-                    <label class="mt-4">Login</label>
-                    <input class="mb-4" type="text" placeholder='Enter your login' />
-                    <label class="">Password</label>
-                    <input class="mb-4" type="password" placeholder='Enter your password' />
+    const handleChangeIsLogin = () => {
+        setIsLogin(!isLogin)
+    }
+    
+    const renderLogin = (
+        <div className='mb-3 sm:my-8 border border-secondary shadow-[#aaaaaa] p-4 rounded-2xl shadow-sm bg-primary flex flex-col items-center'>
+            <img src={logo} alt="Logo" className='pt-8 w-56 max-w-lg sm:w-4/6'></img>
+            <div className='py-8 sm:py-8 w-2/5 min-w-min'>
+                <form className='flex flex-col font-medium items-center'>
+                    <label className='pb-4 text-lg sm:text-xl'>Login</label>
+                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="text" />
+                    <label className='pt-4 pb-4 text-lg sm:text-xl'>Password</label>
+                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
                 </form>
             </div>
-            <div class="p-12">
+            <div className='pb-8 sm:pb-8'>
                 <Link to="/home">
-                    <button class="bg-button text-2xl p-3 rounded-full">
-                        <p>Enter without login :)</p>
+                    <button className='text-lg sm:text-lg py-3 px-6 sm:py-3 sm:px-6 rounded-full bg-button text-black font-bold sm:hover:scale-110'>
+                        <p>Login</p>
                     </button>
                 </Link>
             </div>
+            <div className='sm:px-4 w-full'>
+                <hr className='border w-full border-secondary'></hr>
+            </div>
+            <div className='pb-6 pt-9 flex text-sm sm:text-sm'>
+                <p>Don't have an account?</p>
+                <button className='pl-1 sm:pl-3 text-secondary sm:font-bold' onClick={handleChangeIsLogin}>Sign Up</button>
+            </div>
         </div>
-  */}
+    )
+    
+    const renderSignUp = (
+        <div className='mb-3 sm:my-8 border border-secondary shadow-[#aaaaaa] p-4 rounded-2xl shadow-sm bg-primary flex flex-col items-center'>
+            <img src={logo} alt="Logo" className='pt-8 w-56 max-w-lg sm:w-4/6'></img>
+            <div className='py-8 sm:py-8 w-2/5 min-w-min'>
+                <form className='flex flex-col font-medium items-center'>
+                    <label className='pb-4 text-lg sm:text-xl'>Login</label>
+                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="text" />
+                    <label className='pt-4 pb-4 text-lg sm:text-xl'>Password</label>
+                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
+                    <label className='pt-4 pb-4 text-lg sm:text-xl'>Password</label>
+                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
+                </form>
+            </div>
+            <div className='pb-8 sm:pb-8'>
+                <Link to="/home">
+                    <button className='text-lg sm:text-lg py-3 px-6 sm:py-3 sm:px-6 rounded-full bg-button text-black font-bold sm:hover:scale-110'>
+                        <p>Login</p>
+                    </button>
+                </Link>
+            </div>
+            <div className='sm:px-4 w-full'>
+                <hr className='border w-full border-secondary'></hr>
+            </div>
+            <div className='pb-6 pt-9 flex text-sm sm:text-sm'>
+                <p>Don't have an account?</p>
+                <button className='pl-1 sm:pl-3 text-secondary sm:font-bold' onClick={handleChangeIsLogin}>Sign Up</button>
+            </div>
+        </div>
+    )
 
-        <Footer />
-    </div>
-  )
+    return (
+        <div className='min-h-screen flex flex-col p-3 items-center'>
+            <div className='flex flex-grow justify-center items-center w-3/4 max-w-7xl'>
+                {isLogin ? renderLogin : renderSignUp}
+            </div>
+            <Footer />
+        </div>
+    )
 }
 
 export default Login

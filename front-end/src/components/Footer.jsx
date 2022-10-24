@@ -6,7 +6,7 @@ import ThemeToggle from './ThemeToggle'
 function Footer() {
   return (
     <div className='text-primary rounded-div text-xs md:text-base'>
-      <div className='grid md:grid-cols-2'>
+      <div className='grid sm:grid-cols-2'>
         <div className='flex flex-col justify-evenly items-center w-full md:max-w-[300px]'>
           <span>Projekt Zespołowy 2022/2023</span>
           <div className='border border-secondary shadow-[#aaaaaa] px-1 rounded-full shadow-sm bg-primary my-3 md:my-0'>
