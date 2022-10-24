@@ -12,7 +12,12 @@ const Navbar = () => {
         </div>
       </Link>
       <div className='flex items-center'>
-        <div className='mr-7 hover:text-[#FFD700]'>
+        <div className='mr-7 hover:text-[#14B8A6] dark:hover:text-[#FFD700]'>
+          <Link to="/home">
+            <h1>Home</h1>
+          </Link>
+        </div>
+        <div className='mr-7 hover:text-[#14B8A6] dark:hover:text-[#FFD700]'>
           <Link to="/calculator">
             <h1>Calculator</h1>
           </Link>

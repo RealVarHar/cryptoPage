@@ -18,14 +18,13 @@ const CoinPage = () => {
   },[url])
 
   return (
-    <div class="min-h-screen flex flex-col con">
-      <div class="flex-grow min-h-min">
-        <div>
-          <img src={coin.image?.large} alt='/'/>
-          <p>{coin.name}</p>
-        
-</div>
+    <div className='p-3'>
+      <Navbar />
+      <div className='my-8 rounded-div'>
+        <img src={coin.image?.large} alt='/'/>
+        <p>{coin.name}</p>
       </div>
+      <Footer />
     </div>
   )
 }

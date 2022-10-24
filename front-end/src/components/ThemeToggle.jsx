@@ -6,7 +6,7 @@ const ThemeToggle = () => {
   const { theme, setTheme } = useContext(ThemeContext);
 
   return (
-    <div className='p-2'>
+    <div className='p-2 sm:hover:scale-110'>
       {theme === 'dark' ? (
         <div className='flex items-center cursor-pointer' onClick={()=> setTheme(theme === 'dark' ? 'light' : 'dark')}>
           <HiSun className='text-primary text-3xl' />

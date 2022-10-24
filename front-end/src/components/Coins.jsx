@@ -60,7 +60,7 @@ const Coins = () => {
                 <td>
                   <div className='flex items-center'>
                     <Link to={`/coin/${coin.id}`}>
-                      <div className='ml-2 flex items-center hover:text-teal-400'>
+                      <div className='ml-2 flex items-center hover:text-teal-400 dark:hover:text-[#FFD700]'>
                         <img className='px-2' src={coin.image} alt={coin.id} width="50" />
                         <div className='flex flex-col justify-center'>
                           <p className='font-semibold'>{coin.name}</p>

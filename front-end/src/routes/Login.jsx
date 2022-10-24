@@ -12,18 +12,18 @@ const Login = () => {
     
     const renderLogin = (
         <div className='mb-3 sm:my-8 border border-secondary shadow-[#aaaaaa] p-4 rounded-2xl shadow-sm bg-primary flex flex-col items-center'>
-            <img src={logo} alt="Logo" className='pt-8 w-56 max-w-lg sm:w-4/6'></img>
-            <div className='py-8 sm:py-8 w-2/5 min-w-min'>
+            <img src={logo} alt="Logo" className='pt-4 sm:pt-8 w-56 max-w-lg sm:w-4/6'></img>
+            <div className='py-4 sm:py-8 w-2/5 min-w-min'>
                 <form className='flex flex-col font-medium items-center'>
-                    <label className='pb-4 text-lg sm:text-xl'>Login</label>
-                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="text" />
-                    <label className='pt-4 pb-4 text-lg sm:text-xl'>Password</label>
-                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
+                    <label className='pb-4 text-base sm:text-xl'>Login</label>
+                    <input className='text-xs sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="text" />
+                    <label className='pt-4 pb-4 text-base sm:text-xl'>Password</label>
+                    <input className='text-xs sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
                 </form>
             </div>
-            <div className='pb-8 sm:pb-8'>
+            <div className='pb-4 sm:pb-8'>
                 <Link to="/home">
-                    <button className='text-lg sm:text-lg py-3 px-6 sm:py-3 sm:px-6 rounded-full bg-button text-black font-bold sm:hover:scale-110'>
+                    <button className='text-sm sm:text-lg py-2 px-4 sm:py-3 sm:px-6 rounded-full bg-button text-black font-bold sm:hover:scale-110'>
                         <p>Login</p>
                     </button>
                 </Link>
@@ -31,39 +31,39 @@ const Login = () => {
             <div className='sm:px-4 w-full'>
                 <hr className='border w-full border-secondary'></hr>
             </div>
-            <div className='pb-6 pt-9 flex text-sm sm:text-sm'>
+            <div className='pb-3 pt-6 sm:pb-6 sm:pt-9 flex text-xs sm:text-sm'>
                 <p>Don't have an account?</p>
-                <button className='pl-1 sm:pl-3 text-secondary sm:font-bold' onClick={handleChangeIsLogin}>Sign Up</button>
+                <button className='pl-2 sm:pl-3 text-secondary font-bold dark:text-[#FFD700]' onClick={handleChangeIsLogin}>Sign Up</button>
             </div>
         </div>
     )
     
     const renderSignUp = (
         <div className='mb-3 sm:my-8 border border-secondary shadow-[#aaaaaa] p-4 rounded-2xl shadow-sm bg-primary flex flex-col items-center'>
-            <img src={logo} alt="Logo" className='pt-8 w-56 max-w-lg sm:w-4/6'></img>
-            <div className='py-8 sm:py-8 w-2/5 min-w-min'>
+            <img src={logo} alt="Logo" className='pt-4 sm:pt-8 w-56 max-w-lg sm:w-4/6'></img>
+            <div className='py-4 sm:py-8 w-2/5 min-w-min'>
                 <form className='flex flex-col font-medium items-center'>
-                    <label className='pb-4 text-lg sm:text-xl'>Login</label>
-                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="text" />
-                    <label className='pt-4 pb-4 text-lg sm:text-xl'>Password</label>
-                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
-                    <label className='pt-4 pb-4 text-lg sm:text-xl'>Password</label>
-                    <input className='text-sm sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
+                    <label className='pb-4 text-base sm:text-xl'>Login</label>
+                    <input className='text-xs sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="text" />
+                    <label className='pt-4 pb-4 text-base sm:text-xl'>Password</label>
+                    <input className='text-xs sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
+                    <label className='pt-4 pb-4 text-base sm:text-xl'>Password</label>
+                    <input className='text-xs sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
                 </form>
             </div>
-            <div className='pb-8 sm:pb-8'>
+            <div className='pb-4 sm:pb-8'>
                 <Link to="/home">
-                    <button className='text-lg sm:text-lg py-3 px-6 sm:py-3 sm:px-6 rounded-full bg-button text-black font-bold sm:hover:scale-110'>
-                        <p>Login</p>
+                    <button className='text-sm sm:text-lg py-2 px-4 sm:py-3 sm:px-6 rounded-full bg-button text-black font-bold sm:hover:scale-110'>
+                        <p>Sign Up</p>
                     </button>
                 </Link>
             </div>
             <div className='sm:px-4 w-full'>
                 <hr className='border w-full border-secondary'></hr>
             </div>
-            <div className='pb-6 pt-9 flex text-sm sm:text-sm'>
-                <p>Don't have an account?</p>
-                <button className='pl-1 sm:pl-3 text-secondary sm:font-bold' onClick={handleChangeIsLogin}>Sign Up</button>
+            <div className='pb-3 pt-6 sm:pb-6 sm:pt-9 flex text-xs sm:text-sm'>
+                <p>Already have an account?</p>
+                <button className='pl-2 sm:pl-3 text-secondary font-bold dark:text-[#FFD700]' onClick={handleChangeIsLogin}>Login</button>
             </div>
         </div>
     )

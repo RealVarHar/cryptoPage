@@ -7,13 +7,13 @@ function Footer() {
   return (
     <div className='text-primary rounded-div text-xs md:text-base'>
       <div className='grid sm:grid-cols-2'>
-        <div className='flex flex-col justify-evenly items-center w-full md:max-w-[300px]'>
-          <span>Projekt Zespołowy 2022/2023</span>
-          <div className='border border-secondary shadow-[#aaaaaa] px-1 rounded-full shadow-sm bg-primary my-3 md:my-0'>
+        <div className='flex flex-col sm:flex-row justify-center items-center w-full sm:max-w-[300px] mb-3 sm:mb-0'>
+          <div className='border border-secondary shadow-[#aaaaaa] px-1 rounded-full shadow-sm bg-primary mb-4 sm:mb-0'>
             <ThemeToggle />
           </div>
+          <span className='pl-0 sm:pl-4 font-bold'>Projekt Zespołowy 2022/2023</span>
         </div>
-        <div className='flex justify-center md:justify-end w-full'>
+        <div className='flex justify-center items-center md:justify-end w-full'>
           <div className='flex flex-col justify-center items-center'>
             <span class="flex justify-center p-1">Zespół nr.3</span>
             <div class="flex justify-end">
