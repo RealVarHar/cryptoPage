@@ -1,16 +1,14 @@
 import React from 'react'
-import Footer from '../components/Footer'
-import Navbar from '../components/Navbar'
 import Coins from '../components/Coins'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 
 const Home = () => {
   return (
-    <div class="min-h-screen flex flex-col">
+    <div className='p-3'>
       <Navbar />
-      <div class="flex-grow min-h-min">
-        <Coins />
-      </div>
+      <Coins />
       <Footer />
     </div>
   )

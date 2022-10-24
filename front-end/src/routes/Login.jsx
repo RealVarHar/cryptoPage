@@ -5,7 +5,17 @@ import logo from '../images/logo.png'
 
 const Login = () => {
   return (
-    <div class="min-h-screen flex flex-col">
+    <div className='min-h-screen flex flex-col p-3'>
+        <div className='flex flex-grow justify-center items-center'>
+            <div className='border border-secondary shadow-[#aaaaaa] p-4 rounded-2xl shadow-sm bg-primary'>
+                <div className=''>
+                    <img src={logo} alt="Logo" ></img>
+                </div>
+            </div>
+        </div>
+
+
+{/*
         <div className="grid content-center justify-items-center pb-10 flex-grow">
             <div class="pb-10">
                 <img src={logo} alt="Logo" width="300"></img>
@@ -26,6 +36,8 @@ const Login = () => {
                 </Link>
             </div>
         </div>
+  */}
+
         <Footer />
     </div>
   )

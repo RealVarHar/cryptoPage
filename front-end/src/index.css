@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-.bg-light {
-    background-color: #EEEEEE;
+:root {
+    @apply bg-primary text-primary
 }
 
-.bg-dark {
-    background-color: #222831;
+.rounded-div {
+    @apply border border-secondary shadow-[#aaaaaa] p-4 rounded-2xl shadow-sm bg-primary max-w-7xl w-full mx-auto
 }
 
 .test {
@@ -16,8 +16,25 @@
     background-color: #14B8A6;
     background-color: #EEEEEE;
     background-color: #FFD700;
+    background-color: #FDE047;
 }
 
-.bg-button {
-    background-color: #FFD700;
+.dark {
+    --color-bg-primary: #222831;
+    --color-bg-secondary: #aaaaaa;
+    --color-text-primary: #dbdbdb;
+    --color-text-secondary: #898989;
+    --color-text-accent: #14B8A6;
+    --color-bg-input: #aaaaaa;
+    --color-bg-button: #81e6d9;
+}
+  
+.light {
+    --color-bg-primary: #e6f1f2;
+    --color-bg-secondary: #aaaaaa;
+    --color-text-primary: #2d3748;
+    --color-text-secondary: #a0a0a0;
+    --color-text-accent: #2b6cb0;
+    --color-bg-input: #edf2f7;
+    --color-bg-button: #2b6cb0;
 }
