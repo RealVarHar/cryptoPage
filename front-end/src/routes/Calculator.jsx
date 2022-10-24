@@ -6,7 +6,9 @@ const Calculator = () => {
   return (
     <div className='p-3'>
       <Navbar />
-      <h1>Calculator</h1>
+        <div className='my-8 rounded-div'>
+          <h1>Calculator</h1>
+        </div>
       <Footer />
     </div>
   )
