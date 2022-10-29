@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import Footer from '../components/Footer'
-import logo from '../images/logo.png'
+let useState=React.useState;
+let Link=ReactRouterDOM.Link;
+import Footer from '../components/Footer.jsx'
+let logo='/images/logo.png';
 
 const Login = () => {
     const [isLogin, setIsLogin] = useState(true);

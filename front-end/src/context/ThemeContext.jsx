@@ -1,4 +1,3 @@
-import React, {useState, useEffect, createContext} from 'react'
 
 const getInitialTheme = () => {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -15,10 +14,10 @@ const getInitialTheme = () => {
     return 'light'
 }
 
-export const ThemeContext = createContext()
+export const ThemeContext = React.createContext()
 
 export const ThemeProvider = ({initialTheme, children}) => {
-    const [theme, setTheme] = useState(getInitialTheme)
+    const [theme, setTheme] = React.useState(getInitialTheme)
 
     const rawSetTheme = (theme) => {
         const root = window.document.documentElement;
@@ -34,7 +33,7 @@ export const ThemeProvider = ({initialTheme, children}) => {
         rawSetTheme(initialTheme)
     }
 
-    useEffect(()=> {
+    React.useEffect(()=> {
         rawSetTheme(theme)
     },[theme])
 
@@ -44,10 +43,3 @@ export const ThemeProvider = ({initialTheme, children}) => {
         </ThemeContext.Provider>
     )
 }
-
-
-
-
-
-
-

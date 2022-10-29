@@ -1,7 +1,6 @@
-import React from 'react'
-import Coins from '../components/Coins'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+import Coins from '../components/Coins.jsx'
+import Navbar from '../components/Navbar.jsx'
+import Footer from '../components/Footer.jsx'
 
 
 const Home = () => {

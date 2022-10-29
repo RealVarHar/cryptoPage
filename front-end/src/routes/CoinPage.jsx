@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import { useParams } from 'react-router-dom'
+let useEffect=React.useEffect, useState=React.useState;
+import axios from '/third-party/esm/axios.min.js'
+import Navbar from '../components/Navbar.jsx'
+import Footer from '../components/Footer.jsx'
+let useParams=ReactRouterDOM.useParams;
 
 const CoinPage = () => {
   const [coin, setCoin] = useState({})
@@ -13,7 +13,6 @@ const CoinPage = () => {
   useEffect(() => {
     axios.get(url).then((response) => {
       setCoin(response.data)
-      console.log(response.data)
     })
   },[url])
 

@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react'
-import Footer from '../components/Footer'
-import Navbar from '../components/Navbar'
-import CurrencyRow from '../components/CurrencyRow'
-import axios from 'axios'
+let useEffect=React.useEffect, useState=React.useState;
+import Footer from '../components/Footer.jsx'
+import Navbar from '../components/Navbar.jsx'
+import CurrencyRow from '../components/CurrencyRow.jsx'
+import axios from '/third-party/esm/axios.min.js'
 
 
 const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false'
@@ -33,4 +33,3 @@ const Calculator = () => {
 }
 
 export default Calculator
-

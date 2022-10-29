@@ -1,7 +1,7 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Sparklines, SparklinesLine } from 'react-sparklines'
+import axios from '/third-party/esm/axios.min.js'
+let useEffect=React.useEffect,useState=React.useState;
+let Link=ReactRouterDOM.Link;
+import { Sparklines, SparklinesLine } from '/third-party/esm/react-sparklines/index.js'
 
 const Coins = () => {
   const [coins, setCoins] = useState([])
@@ -55,7 +55,7 @@ const Coins = () => {
               }
             })
             .map((coin) => (
-              <tr className='md:hover:scale-[1.03] shadow-xl rounded-lg h-16 overflow-hidden'>
+              <tr key={coin.id} className='md:hover:scale-[1.03] shadow-xl rounded-lg h-16 overflow-hidden'>
                 <td className='pl-2'><p class="flex justify-center">{coin.market_cap_rank}</p></td>
                 <td>
                   <div className='flex items-center'>
@@ -132,16 +132,16 @@ const Coins = () => {
           </form>
         </div>
         <div className='flex justify-end'>
-          <select className='h-10 bg-primary border border-secondary px-3 py-2 rounded-2xl shadow-xl mr-3' onChange={handleChangePerPage}>
+          <select defaultValue={10} className='h-10 bg-primary border border-secondary px-3 py-2 rounded-2xl shadow-xl mr-3' onChange={handleChangePerPage}>
             <option value={5}>5</option>
-            <option selected value={10}>10</option>
+            <option value={10}>10</option>
             <option value={25}>25</option>
             <option value={50}>50</option>
             <option value={100}>100</option>
             <option value={250}>250</option>
           </select>
-          <select className='h-10 bg-primary border border-secondary px-3 py-2 rounded-2xl shadow-xl' onChange={handleChangeCurrency}>
-            <option selected value={"usd"}>USD</option>
+          <select  defaultValue={"usd"} className='h-10 bg-primary border border-secondary px-3 py-2 rounded-2xl shadow-xl' onChange={handleChangeCurrency}>
+            <option value={"usd"}>USD</option>
             <option value={"pln"}>PLN</option>
           </select>
         </div>

@@ -1,7 +1,6 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import logo from '../images/logo.png'
-import ThemeToggle from './ThemeToggle'
+let Link=ReactRouterDOM.Link;
+let logo='/images/logo.png';
+import ThemeToggle from './ThemeToggle.jsx'
 
 const Navbar = () => {
   return (

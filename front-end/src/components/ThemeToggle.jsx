@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { HiSun, HiMoon } from 'react-icons/hi';
-import { ThemeContext } from '../context/ThemeContext';
+let useContext=React.useContext;
+import reactIcons from '/third-party/esm/react-icons';let HiSun=await reactIcons("HiSun"),HiMoon=await reactIcons("HiSun");
+import { ThemeContext } from '../context/ThemeContext.jsx';
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useContext(ThemeContext);

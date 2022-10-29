@@ -1,0 +1,1 @@
+These are shared cdn files in cjs/esm format

@@ -1,7 +1,4 @@
-import React from 'react'
-import ThemeToggle from './ThemeToggle'
-
-
+import ThemeToggle from './ThemeToggle.jsx'
 
 function Footer() {
   return (
