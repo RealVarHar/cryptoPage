@@ -1,4 +1,5 @@
 let useEffect=React.useEffect, useState=React.useState;
+import * as Chart from '/third-party/esm/chart/chart.esm.js'
 import axios from '/third-party/esm/axios.min.js'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
@@ -22,6 +23,7 @@ const CoinPage = () => {
       <div className='my-8 rounded-div'>
         <img src={coin.image?.large} alt='/'/>
         <p>{coin.name}</p>
+        
       </div>
       <Footer />
     </div>
