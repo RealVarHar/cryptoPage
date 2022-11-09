@@ -1,15 +1,12 @@
 import process from 'node:process';
 import fastify from 'fastify';
 import fs from 'fs';
+import reactHandler from "./reactHandler.js";
 let appRoutes=fs.promises.readFile('../front-end/src/App.jsx',{encoding:'utf8'});
 import path from 'path';
-import babel from "@babel/core";
-import { Buffer } from 'node:buffer';
-import postcss from 'postcss';
-import atImport from "postcss-import";
-import autoprefixer from 'autoprefixer';
-import tailwindcss from 'tailwindcss';
-import postcssMinify from 'postcss-minify';
+import database from "./database.js";
+import crypto from 'crypto';
+global.database=database;
 var arg={};
 for(let i=2;i<process.argv.length;i++) {
     if(process.argv[i][0]=="-") {
@@ -37,141 +34,15 @@ app.addHook('preHandler',async (req,res) => {
     res.header('Access-Control-Allow-Methods','GET, POST');
     res.header('Access-Control-Allow-Headers','X-Requested-With,content-type, Authorization');
 });
-let mimeTypes={};
-fs.promises.readFile('file-extension-to-mime-types.json',{encoding:'utf8'}).then((file)=>{
-    mimeTypes=JSON.parse(file);
-})
-async function mkdir(url){
-    try {
-        await fs.promises.mkdir(url, { recursive: true });
-    } catch {}
-    return;
-}
-async function convertCSS(input,path){
-    let result= await postcss([tailwindcss,autoprefixer,postcssMinify]).use(atImport()).process(input,{from:path});
-    return result.css;
-}
-async function convertJSX(input,path){
-    return (await babel.transformAsync(input, {presets: ["@babel/preset-react"]})).code;
-}
-async function returnfile(url,res,redirected=false){
-    url=url.replaceAll('\\','/');
-    let extension=url.lastIndexOf(".");
-    let mime;
-    if(extension>"../front-end".length){
-        extension=url.substr(extension);
-        mime=mimeTypes[extension];
-    }else{
-        //addressing a folder or extension not provided
-        let tmp=url.lastIndexOf("/");
-        let searched=url.substr(tmp+1);
-        let containingFolder=url.substr(0,tmp);
-        let files=await fs.promises.readdir(containingFolder);
-        let foundfile;
-        for(let fileName of files){
-            if(fileName.startsWith(searched)){
-                if(fileName==searched){
-                    let isdir=(await fs.promises.stat(containingFolder+"/"+fileName)).isDirectory();
-                    if(isdir){
-                        return await returnfile(containingFolder+"/"+fileName+"/index",res,true);
-                    }else{
-                        //ok file, set mimetype
-                        mime=mimeTypes[".txt"];
-                        extension=".txt";
-                    }
-                }else{
-                    if(fileName[searched.length]=='.'){
-                        let isdir=(await fs.promises.stat(containingFolder+"/"+fileName)).isDirectory();
-                        if(!isdir){
-                            foundfile=fileName;
-                        }
-                    }
-                }
-            }
-        }
-        if(foundfile!=undefined){
-            return await returnfile(containingFolder+"/"+foundfile,res,true);
-        }
-        console.log(url);
-        throw new Error();
-    }
-    if(redirected){
-        return url.substr("../front-end".length);
-    }
-    res.header('content-type', mime+'; charset=utf-8');
-    res.type(mime);
-    let filepath=url;
-    let parsefile='';
-    let decode=true;
-    if(["image","video"].includes(mime.split('/')[0])){
-        decode=false;
-    }
-    if(extension=='.jsx'){
-        parsefile=convertJSX;
-    }else if(extension=='.css'){
-        parsefile=convertCSS;
-    }
-    if(parsefile!==''){
-        let cachepath='../babel-cache'+url.substr('../front-end'.length);
-        let filename=url.split('/').pop();
-        //check if parsed exists
-        let filestat=await fs.promises.stat(filepath);
-        try{
-            let cachestat=await fs.promises.stat(cachepath);
-            if(cachestat.mtime.getTime()==filestat.mtime.getTime()){
-                return fs.createReadStream(cachepath, 'utf8');
-            }else{
-                throw new Error();
-            }
-        }catch{
-            try{
-                await mkdir(cachepath.substr(0,cachepath.length-filename.length-1));
-                let file=await fs.promises.readFile(filepath, { encoding: 'utf8' });
-                file=await parsefile(file,filepath);
-                fs.promises.writeFile(cachepath,file, { encoding: 'utf8' }).then(()=>{
-                    fs.promises.utimes(cachepath,filestat.atime,filestat.mtime);
-                });
-                if(decode){
-                    return Buffer.from(file,'utf8');
-                }else{
-                    return Buffer.from(file);
-                }
-            }catch(e){
-                console.log(e.message);
-            }
-        }
-    }
-    if(decode){
-        return fs.createReadStream(url, 'utf8');
-    }else{
-        return fs.createReadStream(url);
-    }
-};
-appRoutes=await appRoutes;
-let lastAppRoute=0;
-lastAppRoute=appRoutes.indexOf("<Route ");
-while(lastAppRoute!=-1){
-    let pathStart=appRoutes.indexOf("path=",lastAppRoute+"path=".length);
-    let entry=[appRoutes.indexOf("'",pathStart),"'"];
-    if(entry[0]==-1)entry[0]=null;
-    let altentry=appRoutes.indexOf('"',pathStart);
-    if(altentry!=-1&&altentry<entry[0])entry=[altentry,'"'];
-    altentry=appRoutes.indexOf('`',pathStart);
-    if(altentry!=-1&&altentry<entry[0])entry=[altentry,'`'];
-    let end=appRoutes.indexOf(entry[1],entry[0]+1);
-    let route=appRoutes.substring(entry[0]+1,end);
-    if(route[0]=="/"){
-        console.log("adding route "+route);
-        app.get(route,async (req,res) => {try{return returnfile('../front-end/index.html',res);}catch(e){console.log(e);}});
-    }
-    lastAppRoute=appRoutes.indexOf("<Route ",end);
-}
+
+await reactHandler.registerRoutes(app,appRoutes);
+
 app.get('*',async (req,res) => {
     let url=path.normalize(req.url);
     let file;
     try{
         let filepath='../front-end'+url;
-        file=await returnfile(filepath,res);
+        file=await reactHandler.returnfile(filepath,res);
     }catch(e){
         console.log(e);
         const err = new Error();
@@ -184,6 +55,84 @@ app.get('*',async (req,res) => {
     }else{
         return file;
     }
+});
+let getters={
+    string:function (str){
+        //check if this is a string
+        if(typeof(str)=="string")return str;
+        return null;
+    },
+    float:function(str){
+        //check if this is a number
+        if(typeof(str)!="number"&&typeof(str)!='string')return null;
+        str=parseFloat(str);
+        if(str!=str)return null;
+        return str;
+    },
+    int:function(str){
+        //check if this is a number and not a float
+        str=getFloat(str);
+        let str2=parseInt(str);
+        if(str!=str2)return null;
+        return str2;
+    },
+    bool:function(input){
+        //check if this is a number and not a float
+        let type=typeof(input);
+        if(type=='string'){
+            return input=="true"||input=="1";
+        }else if(type=='number'){
+            return input!=0;
+        }else if(type=='boolean'){
+            return input;
+        }
+        return null;
+    }
+}
+let getBody=function(parameters,body){
+    for(let parameter in parameters){
+        let value=getters[parameters[parameter]](body[parameter]);
+        if(value===null||body[parameter].toString().length==0){
+            const err = new Error();
+            err.statusCode = 400;
+            err.message = 'Post variables are not valid';
+            throw err
+        }else{
+            body[parameter]=value;
+        }
+    }
+}
+app.post('/login',async (req,res) => {
+    let parameters={user:"string",password:"string"};
+    getBody(parameters,req.body);
+    let password=crypto.pbkdf2Sync(parameters.password, database.config.salt,  100, 64, `sha512`).toString(`hex`); 
+    let user=database.queryRow("select name from users where name=? and password=?",[parameters.user,parameters.password]);
+    if(user==undefined){
+        const err = new Error();
+        err.statusCode = 400;
+        err.message = 'User not found';
+        throw err
+    }
+});
+app.post('/register',async (req,res) => {
+    let parameters={user:"string",password:"string"};
+    getBody(parameters,req.body);
+    let userTaken=database.queryRow("select name from users where name=?",[parameters.user]);
+    if(userTaken!=undefined){
+        const err = new Error();
+        err.statusCode = 400;
+        err.message = 'Username Taken';
+        throw err
+    }else{
+        let password=crypto.pbkdf2Sync(parameters.password, database.config.salt,  100, 64, `sha512`).toString(`hex`); 
+        database.query("insert into users (name,password,balance) values (?,?,?)",[parameters.user,password,1000]);
+    }
+});
+app.post('/checkLogin',async (req,res) => {
+    let parameters={user:"string"};
+    getBody(parameters);
+    let userTaken=database.queryRow("select name from users where name=?",[parameters.user]);
+    return userTaken!=undefined;
 });
 app.listen({port: arg.httpsPort,host: arg.ip},() => {
     console.log(`Server ${process.pid} started`)

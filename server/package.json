@@ -10,6 +10,8 @@
         "@fastify/formbody": "^7.0.1",
         "autoprefixer": "^10.4.12",
         "babel-plugin-react-html-attrs": "^3.0.5",
+        "better-sqlite3": "^7.6.2",
+        "coingecko-api": "^1.0.10",
         "fast-xml-parser": "^4.0.9",
         "fastify": "^4.3.0",
         "fastify-qs": "^4.0.0",
