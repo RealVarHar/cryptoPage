@@ -5,7 +5,7 @@ import { Sparklines, SparklinesLine } from '/third-party/esm/react-sparklines/in
 
 const Coins = () => {
   const [coins, setCoins] = useState([])
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [currency, setCurrency] = useState('usd');
