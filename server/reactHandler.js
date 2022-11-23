@@ -10,12 +10,6 @@ let mimeTypes={};
 fs.promises.readFile('file-extension-to-mime-types.json',{encoding:'utf8'}).then((file)=>{
     mimeTypes=JSON.parse(file);
 })
-async function mkdir(url){
-    try {
-        await fs.promises.mkdir(url, { recursive: true });
-    } catch {}
-    return;
-}
 async function convertCSS(input,path){
     let result= await postcss([tailwindcss,autoprefixer,postcssMinify]).use(atImport()).process(input,{from:path});
     return result.css;
@@ -115,7 +109,7 @@ async function returnfile(url,res,redirected=false){
             }
         }catch{
             try{
-                await mkdir(cachepath.substr(0,cachepath.length-filename.length-1));
+                await toolbox.mkdir(cachepath.substr(0,cachepath.length-filename.length-1));
                 let file=await fs.promises.readFile(filepath, { encoding: 'utf8' });
                 file=await parsefile(file,filepath);
                 fs.promises.writeFile(cachepath,file, { encoding: 'utf8' }).then(()=>{

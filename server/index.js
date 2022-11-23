@@ -4,6 +4,8 @@ import fs from 'fs';
 import reactHandler from "./reactHandler.js";
 let appRoutes=fs.promises.readFile('../front-end/src/App.jsx',{encoding:'utf8'});
 import path from 'path';
+import toolbox from "./toolbox.js"
+global.toolbox=toolbox;
 import database from "./database.js";
 import crypto from 'crypto';
 global.database=database;
@@ -56,49 +58,22 @@ app.get('*',async (req,res) => {
         return file;
     }
 });
-let getters={
-    string:function (str){
-        //check if this is a string
-        if(typeof(str)=="string")return str;
-        return null;
-    },
-    float:function(str){
-        //check if this is a number
-        if(typeof(str)!="number"&&typeof(str)!='string')return null;
-        str=parseFloat(str);
-        if(str!=str)return null;
-        return str;
-    },
-    int:function(str){
-        //check if this is a number and not a float
-        str=getFloat(str);
-        let str2=parseInt(str);
-        if(str!=str2)return null;
-        return str2;
-    },
-    bool:function(input){
-        //check if this is a number and not a float
-        let type=typeof(input);
-        if(type=='string'){
-            return input=="true"||input=="1";
-        }else if(type=='number'){
-            return input!=0;
-        }else if(type=='boolean'){
-            return input;
-        }
-        return null;
-    }
-}
-let getBody=function(parameters,body){
+let getBody=function(parameters,body,strict=true){
     for(let parameter in parameters){
-        let value=getters[parameters[parameter]](body[parameter]);
-        if(value===null||body[parameter].toString().length==0){
+        let getter;
+        if(typeof(parameter)=='string'){
+            getter=parameters[parameter];
+        }else{
+            getter='array';
+        }
+        let value=toolbox.getters[getter](body[parameter]);
+        if(strict&& (value===null||body[parameter].toString().length==0) ){
             const err = new Error();
             err.statusCode = 400;
             err.message = 'Post variables are not valid';
             throw err
         }else{
-            body[parameter]=value;
+            parameters[parameter]=value;
         }
     }
 }
@@ -106,7 +81,7 @@ app.post('/login',async (req,res) => {
     let parameters={user:"string",password:"string"};
     getBody(parameters,req.body);
     let password=crypto.pbkdf2Sync(parameters.password, database.config.salt,  100, 64, `sha512`).toString(`hex`); 
-    let user=database.queryRow("select name from users where name=? and password=?",[parameters.user,parameters.password]);
+    let user=database.queryRow("select name from users where name=? and password=?",[parameters.user,password]);
     if(user==undefined){
         const err = new Error();
         err.statusCode = 400;
@@ -130,9 +105,14 @@ app.post('/register',async (req,res) => {
 });
 app.post('/checkLogin',async (req,res) => {
     let parameters={user:"string"};
-    getBody(parameters);
+    getBody(parameters,req.body);
     let userTaken=database.queryRow("select name from users where name=?",[parameters.user]);
     return userTaken!=undefined;
+});
+app.post('/searchCoin',async (req,res)=>{
+    let parameters={limit:"int",name:"string",dates:["date"]};
+    getBody(parameters,req.body,false);
+    return database.fetchCoin.search(parameters.name,parameters.limit,parameters.dates);
 });
 app.listen({port: arg.httpsPort,host: arg.ip},() => {
     console.log(`Server ${process.pid} started`)
