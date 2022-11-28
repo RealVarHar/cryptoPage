@@ -131,4 +131,16 @@ async function returnfile(url,res,redirected=false){
         return fs.createReadStream(url);
     }
 };
+let busy=false;
+fs.watch('../front-end', { recursive:true}, async (eventType, filename) => {
+    if(busy)return;
+    busy=true;
+    let file=await fs.promises.readFile('../front-end/src/index.css', { encoding: 'utf8' });
+    file=await convertCSS(file,'../front-end/src/index.css');
+    let filestat=await fs.promises.stat('../front-end/src/index.css');
+    fs.promises.writeFile('../babel-cache/src/index.css',file, { encoding: 'utf8' }).then(()=>{
+        fs.promises.utimes('../babel-cache/src/index.css',filestat.atime,filestat.mtime);
+        busy=false;
+    });
+});
 export default {registerRoutes,returnfile};

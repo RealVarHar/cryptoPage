@@ -20,7 +20,7 @@ function toYearDay(year,month,day){
     return getDayDiff(start,now);
 }
 function fromYearDay(year,day){
-    let now=new Date(year,0,0);
+    let now=new Date(year,0,1);
     now.setDate(day);
     return now;
 }
