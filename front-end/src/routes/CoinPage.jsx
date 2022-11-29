@@ -162,21 +162,21 @@ const CoinPage = () => {
           <div>
             <div className='flex justify-between'>
               <div className='flex items-center'>
-                <p className='font-semibold text-lg'>Rank #{coin.market_cap_rank}</p>
+                <p className='font-semibold sm:text-lg text-md'>Rank #{coin.market_cap_rank}</p>
               </div>
-              <select defaultValue={"usd"} className='h-10 bg-primary border border-secondary px-3 py-2 rounded-2xl shadow-xl' onChange={handleChangeCurrency}>
+              <select defaultValue={"usd"} className='h-9 sm:h-10 bg-primary border border-secondary px-3 py-2 rounded-2xl shadow-xl sm:text-base text-sm' onChange={handleChangeCurrency}>
                 <option value={"usd"}>USD</option>
                 <option value={"pln"}>PLN</option>
               </select>
             </div>
             <div className='mt-5 flex flex-col lg:flex-row justify-center'>
               <div className='px-5 lg:w-2/5 flex flex-col justify-between'>
-                <div className='mt-5 flex justify-center'>
+                <div className='flex justify-center'>
                   <div className='flex items-center'>
-                    <img src={coin.image?.large} alt='/' width={90}/>
+                    <img src={coin.image?.large} alt='/' className='w-16 sm:w-24'/>
                     <div className='mx-3 flex flex-col items-center'>
-                      <p className='text-4xl font-semibold'>{coin.name}</p>
-                      <p className='text-lg text-[#949494]'>{coin.symbol.toUpperCase()}</p>
+                      <p className='text-2xl sm:text-4xl font-semibold'>{coin.name}</p>
+                      <p className='text-md sm:text-lg text-[#949494]'>{coin.symbol.toUpperCase()}</p>
                     </div>
                   </div>
                 </div>

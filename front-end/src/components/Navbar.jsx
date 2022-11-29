@@ -17,8 +17,8 @@ const Navbar = () => {
           </Link>
         </div>
         <div className='mr-7 hover:text-[#14B8A6] dark:hover:text-[#FFD700]'>
-          <Link to="/calculator">
-            <h1>Calculator</h1>
+          <Link to="/converter">
+            <h1>Converter</h1>
           </Link>
         </div>
         <ThemeToggle />
