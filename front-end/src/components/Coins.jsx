@@ -45,15 +45,7 @@ const Coins = () => {
         </thead>
         <tbody>
           {coins.sort((a, b) => a.rank - b.rank)
-            .filter((value) => {
-              if (searchText === '') {
-                return value;
-              } else if (
-                value.name.toLowerCase().includes(searchText.toLowerCase()) || value.symbol.toLowerCase().includes(searchText.toLowerCase())
-              ) {
-                return value;
-              }
-            })
+            .filter((value) => value.name.toLowerCase().includes(searchText.toLowerCase()) || value.symbol.toLowerCase().includes(searchText.toLowerCase()))
             .map((coin) => (
               <tr key={coin.id} className='md:hover:scale-[1.03] shadow-xl rounded-lg h-16 overflow-hidden'>
                 <td className='pl-2'><p class="flex justify-center">{coin.market_cap_rank}</p></td>
