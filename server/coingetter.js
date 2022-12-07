@@ -2,6 +2,7 @@ import CoinGecko from 'coingecko-api';
 //import toolbox from './toolbox.js';
 CoinGecko.TIMEOUT=600000;
 const CoinGeckoClient2 = new CoinGecko();
+let sharedTransaction=0;
 function traceMethodCalls(obj) {
     let handler = {
         get(target, propKey, receiver) {
@@ -357,7 +358,7 @@ async function getDefault250(){
     //returns names of any 250 sorted by marketcap
     let lastminute=new Date();
     lastminute=Math.floor(lastminute.getTime()/60000);//update every minute
-    let coins=database.queryRows("select id from coins where last_update!=0 order by market_cap limit 250").map(a=>a.id);
+    let coins=database.queryRows("select id from coins where market_cap!=0 order by market_cap desc limit 250").map(a=>a.id);
     if(coins.length<250){
         let coindata=await getTempCoin();//getMarkets
         for(let coin of coindata)updateCoin(coin);
@@ -378,12 +379,14 @@ async function search(names=null,limit=250,days=[]){
             day.setDate(day.getDate()-1);
         }
     }
-    database.query("BEGIN TRANSACTION");
+    if(sharedTransaction==0)database.query("BEGIN TRANSACTION");
+    sharedTransaction++;
     if(names.length==0){
         names=await getDefault250();
     }
     let result=await getcoins(names,days);
-    database.query("COMMIT TRANSACTION");
+    sharedTransaction--;
+    if(sharedTransaction==0)database.query("COMMIT TRANSACTION");
     result=result.sort((a,b)=>b.market_cap-a.market_cap).slice(0,limit);
     return result;
 }

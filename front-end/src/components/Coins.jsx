@@ -4,17 +4,18 @@ let Link=ReactRouterDOM.Link;
 import { Sparklines, SparklinesLine } from '/third-party/esm/react-sparklines/index.js'
 
 const Coins = () => {
+  const [typeWaiter, settypeWaiter] = useState(false)
   const [coins, setCoins] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
+  const [searchTextProxy, setSearchTextProxy] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [currency, setCurrency] = useState('usd');
-
   const url = `http://127.0.0.1/searchCoin`;//?vs_currency=${currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`
-  let parameters={limit:perPage};
-  if(searchText!="")parameters.name=searchText;
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
+    let parameters={limit:perPage};
+    if(searchText!="")parameters.name=searchText;
     axios.post(url,parameters).then((response) => {
       for(let coin of response.data){
         coin.sparkline=Object.values(coin.sparkline).reduce((p,c)=>{p.push(...c);return p;},[]);
@@ -26,7 +27,17 @@ const Coins = () => {
       setCoins(response.data)
       setIsLoading(false)
     })
-  }, [url] )
+  }, [url,searchText,perPage] );
+  useEffect(() => {
+    console.log(typeWaiter,searchTextProxy);
+    if(typeWaiter!==false){
+      clearTimeout(typeWaiter);
+    }
+    settypeWaiter(setTimeout(()=>{
+      setSearchText(searchTextProxy);
+      settypeWaiter(false);
+    },1000));
+  }, [searchTextProxy] );
 
   const handleChangePerPage = (event) => {
     setPerPage(event.target.value);
@@ -99,8 +110,8 @@ const Coins = () => {
                     <p class="text-red-600">{coin.price_change_percentage_7d_in_currency.toFixed(2)}%</p>
                   )}
                 </td>
-                <td class="p-2 text-right hidden lg:table-cell">{coin.total_volume.toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
-                <td class="p-2 text-right hidden md:table-cell">{coin.market_cap.toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
+                <td class="p-2 text-right hidden lg:table-cell">{(coin.total_volume==null?0:coin.total_volume).toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
+                <td class="p-2 text-right hidden md:table-cell">{(coin.market_cap==null?0:coin.market_cap).toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
                 <td className=''>
                   {coin.price_change_percentage_7d_in_currency > 0 ? (
                     <Sparklines data={coin.sparkline}>
@@ -125,7 +136,7 @@ const Coins = () => {
           <h1 className='text-2xl font-bold my-2'>Search Crypto</h1>
           <form className='flex justify-center h-10 md:w-1/3'>
             <input
-              onChange={(e) => setSearchText(e.target.value)}
+              onChange={(e) => setSearchTextProxy(e.target.value)}
               className='w-full bg-primary border border-secondary px-4 py-2 rounded-2xl shadow-xl'
               type='text'
               placeholder='Search a coin' />
