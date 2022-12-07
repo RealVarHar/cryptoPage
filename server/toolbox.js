@@ -19,10 +19,29 @@ function toYearDay(year,month,day){
     var start = new Date(year, 0, 0);
     return getDayDiff(start,now);
 }
+function qrepeat(str,n){
+    return Array(n).fill(str).join(',');
+}
 function fromYearDay(year,day){
     let now=new Date(year,0,1);
     now.setDate(day);
     return now;
+}
+const daysInyear = year => (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)) ? 366 : 365;
+function* dayWalker(from,to){
+    if(typeof(from)=="string")from=from.split(':');
+    if(typeof(to)=="string")to=to.split(':');
+    let maxdayInyear;
+    for(let year=from[0];year<to[0];year++){
+        maxdayInyear=daysInyear(year);
+        for(let day=from[0];day<=maxdayInyear;day++){
+            yield year+":"+day;
+        }
+        from[1]=1;
+    }
+    for(let day=from[1];day<=to[1];day++){
+        yield to[0]+":"+day;
+    }
 }
 async function mkdir(url){
     try {
@@ -129,4 +148,4 @@ async function fetchImage(name,url){
     });
     return "/babel-cache/images/250"+name;
 }
-export default {getters,mkdir,fromYearDay,toYearDay,getDayDiff,fetchImage,access};
+export default {getters,mkdir,fromYearDay,toYearDay,getDayDiff,fetchImage,access,qrepeat,dayWalker};

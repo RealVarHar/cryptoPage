@@ -10,11 +10,19 @@ const Coins = () => {
   const [perPage, setPerPage] = useState(10);
   const [currency, setCurrency] = useState('usd');
 
-  const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`
-
+  const url = `http://127.0.0.1/searchCoin`;//?vs_currency=${currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`
+  let parameters={limit:perPage};
+  if(searchText!="")parameters.name=searchText;
   useEffect(() => {
     setIsLoading(true)
-    axios.get(url).then((response) => {
+    axios.post(url,parameters).then((response) => {
+      for(let coin of response.data){
+        coin.sparkline=Object.values(coin.sparkline).reduce((p,c)=>{p.push(...c);return p;},[]);
+        for(let key in coin.data){
+          coin[key]=coin.data[key];
+        }
+        coin.current_price=coin.price;
+      }
       setCoins(response.data)
       setIsLoading(false)
     })
@@ -95,11 +103,11 @@ const Coins = () => {
                 <td class="p-2 text-right hidden md:table-cell">{coin.market_cap.toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
                 <td className=''>
                   {coin.price_change_percentage_7d_in_currency > 0 ? (
-                    <Sparklines data={coin.sparkline_in_7d.price}>
+                    <Sparklines data={coin.sparkline}>
                       <SparklinesLine color="green" />
                     </Sparklines>
                   ) : (
-                    <Sparklines data={coin.sparkline_in_7d.price}>
+                    <Sparklines data={coin.sparkline}>
                       <SparklinesLine color="red" />
                     </Sparklines>
                   )}

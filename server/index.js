@@ -9,6 +9,8 @@ global.toolbox=toolbox;
 import database from "./database.js";
 import crypto from 'crypto';
 global.database=database;
+import coingetter from "./coingetter.js";
+coingetter.refreshList();
 var arg={};
 for(let i=2;i<process.argv.length;i++) {
     if(process.argv[i][0]=="-") {
@@ -112,7 +114,7 @@ app.post('/checkLogin',async (req,res) => {
 app.post('/searchCoin',async (req,res)=>{
     let parameters={limit:"int",name:"string",dates:["date"]};
     getBody(parameters,req.body,false);
-    return database.fetchCoin.search(parameters.name,parameters.limit,parameters.dates);
+    return coingetter.search(parameters.name,parameters.limit,parameters.dates);
 });
 app.listen({port: arg.httpsPort,host: arg.ip},() => {
     console.log(`Server ${process.pid} started`)
