@@ -9,12 +9,12 @@ const Converter = () => {
       <Navbar />
         <div className='my-8 rounded-div'>
             <div className='flex justify-center'>
-                <p className='text-4xl'>Cryptocurrency Converter</p>
+                <p className='text-2xl md:text-4xl text-center font-semibold'>Cryptocurrency Converter</p>
             </div>
-            <div className='my-16'>
+            <div className='mt-16 mb-16'>
                 <CryptoToFiat />
             </div>
-            <div className='my-16'>
+            <div className='mb-8'>
                 <CryptoToCrypto />
             </div>
         </div>

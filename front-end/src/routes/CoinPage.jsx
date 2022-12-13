@@ -162,7 +162,7 @@ const CoinPage = () => {
           <div>
             <div className='flex justify-between'>
               <div className='flex items-center'>
-                <p className='font-semibold sm:text-lg text-md'>Rank #{coin.market_cap_rank}</p>
+                <p className='font-semibold sm:text-lg text-md'>Rank {coin.market_cap_rank != null ? "#"+coin.market_cap_rank : "-"}</p>
               </div>
               <select defaultValue={"usd"} className='h-9 sm:h-10 bg-primary border border-secondary px-3 py-2 rounded-2xl shadow-xl sm:text-base text-sm' onChange={handleChangeCurrency}>
                 <option value={"usd"}>USD</option>
@@ -174,15 +174,19 @@ const CoinPage = () => {
                 <div className='flex justify-center'>
                   <div className='flex items-center'>
                     <img src={coin.image?.large} alt='/' className='w-16 sm:w-24'/>
-                    <div className='mx-3 flex flex-col items-center'>
-                      <p className='text-2xl sm:text-4xl font-semibold'>{coin.name}</p>
+                    <div className='mx-0 flex flex-col items-center text-center'>
+                      <p className='mx-3 text-2xl sm:text-4xl font-semibold'>{coin.name}</p>
                       <p className='text-md sm:text-lg text-[#949494]'>{coin.symbol.toUpperCase()}</p>
                     </div>
                   </div>
                 </div>
                 <div className='mt-5 flex justify-between'>
                   <div className='flex items-center'>
-                    <p className='text-xl sm:text-3xl font-semibold flex'>{coin.market_data.current_price[currency] > 1 ? coin.market_data.current_price[currency].toLocaleString('pl-PL') : coin.market_data.current_price[currency]} {currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
+                    <p className='text-xl sm:text-3xl font-semibold flex'>
+                      {coin.market_data.current_price[currency] != null ? (
+                        <p className='flex'>{coin.market_data.current_price[currency] > 1 ? coin.market_data.current_price[currency].toLocaleString('pl-PL') : coin.market_data.current_price[currency]} {currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
+                      ) : ("-")}
+                    </p>
                     <p className='ml-2 sm:ml-3 text-lg sm:text-2xl font-semibold'>
                       {coin.market_data.price_change_percentage_24h_in_currency[currency] == null ? (
                           <p></p>
@@ -193,37 +197,67 @@ const CoinPage = () => {
                         )}
                     </p>
                     <p className='ml-2 sm:ml-3 text-md sm:text-lg font-semibold text-[#949494] flex'>
-                      {parseFloat(coin.market_data.price_change_24h_in_currency[currency].toFixed(5))}{currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}
+                      {coin.market_data.price_change_24h_in_currency[currency] != null ? (
+                        <p className='flex'>{parseFloat(coin.market_data.price_change_24h_in_currency[currency].toFixed(5))}{currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
+                      ) : (<p></p>)}
                     </p>
                   </div>
                 </div>
                 <div className='mt-5'>
-                  <div className='bg-slate-300 dark:bg-slate-600 h-3 rounded-full'>
-                    <div className='bg-button h-3 rounded-full' style={{ width: ( ( 100 - ( ( coin.market_data.high_24h[currency] - coin.market_data.current_price[currency] ) / ( coin.market_data.high_24h[currency] - coin.market_data.low_24h[currency] ) * 100 )).toString( ) + "%" ) }}>
+                  {coin.market_data.low_24h[currency] != null && coin.market_data.high_24h[currency] != null ? (
+                    <div>
+                      <div className='bg-slate-300 dark:bg-slate-600 h-3 rounded-full'>
+                        <div className='bg-button h-3 rounded-full' style={{ width: ( ( 100 - ( ( coin.market_data.high_24h[currency] - coin.market_data.current_price[currency] ) / ( coin.market_data.high_24h[currency] - coin.market_data.low_24h[currency] ) * 100 )).toString( ) + "%" ) }}>
+                        </div>
+                      </div>
+                      <div className='flex justify-between font-semibold text-xs sm:text-base'>
+                        <p className='flex'>{coin.market_data.low_24h[currency] > 1 ? coin.market_data.low_24h[currency].toLocaleString('pl-PL') : coin.market_data.low_24h[currency]} {currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
+                        <p className='flex'>24H Range</p>
+                        <p className='flex'>{coin.market_data.high_24h[currency] > 1 ? coin.market_data.high_24h[currency].toLocaleString('pl-PL') : coin.market_data.high_24h[currency]} {currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className='flex justify-between font-semibold text-xs sm:text-base'>
-                    <p className='flex'>{coin.market_data.low_24h[currency] > 1 ? coin.market_data.low_24h[currency].toLocaleString('pl-PL') : coin.market_data.low_24h[currency]} {currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
-                    <p className='flex'>24H Range</p>
-                    <p className='flex'>{coin.market_data.high_24h[currency] > 1 ? coin.market_data.high_24h[currency].toLocaleString('pl-PL') : coin.market_data.high_24h[currency]} {currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
-                  </div>
+                  ) : (
+                    <div>
+                      <div className='bg-slate-300 dark:bg-slate-600 h-3 rounded-full'>
+                      </div>
+                      <div className='flex justify-between font-semibold text-xs sm:text-base'>
+                        <p className='flex'>-</p>
+                        <p className='flex'>24H Range</p>
+                        <p className='flex'>-</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className='mt-5'>
-                  <div className='bg-green-600 dark:bg-green-800 h-3 rounded-full'>
-                    <div className='bg-red-600 dark:bg-red-800 h-3 rounded-l-full' style={{ width: (coin.sentiment_votes_down_percentage).toString() + "%" }}></div>
+                  {coin.sentiment_votes_down_percentage != null && coin.sentiment_votes_up_percentage != null ? (
+                  <div>  
+                    <div className='bg-green-600 dark:bg-green-800 h-3 rounded-full'>
+                      <div className='bg-red-600 dark:bg-red-800 h-3 rounded-l-full' style={{ width: (coin.sentiment_votes_down_percentage).toString() + "%" }}></div>
+                    </div>
+                    <div className='flex justify-between font-semibold text-xs sm:text-base'>
+                      <p className='flex'>{coin.sentiment_votes_down_percentage}%</p>
+                      <p className='flex'>Sell / Buy</p>
+                      <p className='flex'>{coin.sentiment_votes_up_percentage}%</p>
+                    </div>
                   </div>
-                  <div className='flex justify-between font-semibold text-xs sm:text-base'>
-                    <p className='flex'>{coin.sentiment_votes_down_percentage}%</p>
-                    <p className='flex'>Sell / Buy</p>
-                    <p className='flex'>{coin.sentiment_votes_up_percentage}%</p>
-                  </div>
+                  ) : (
+                    <div>
+                      <div className='bg-slate-300 dark:bg-slate-600 h-3 rounded-full'>
+                      </div>
+                      <div className='flex justify-between font-semibold text-xs sm:text-base'>
+                        <p className='flex'>-</p>
+                        <p className='flex'>Sell / Buy</p>
+                        <p className='flex'>-</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className='my-5'>
                   <div className='mt-5 flex justify-between'>
                     <div className='w-1/5 flex flex-col items-center border border-secondary rounded-lg sm:text-lg text-xs'>
                       <div className='w-full border-b border-secondary flex justify-center font-semibold'>1h</div>
                       <div>{coin.market_data.price_change_percentage_1h_in_currency[currency] == null ? (
-                          <p></p>
+                          <p>-</p>
                         ) : coin.market_data.price_change_percentage_1h_in_currency[currency] > 0 ? (
                           <p class="text-green-600 font-semibold">{coin.market_data.price_change_percentage_1h_in_currency[currency].toFixed(2)}%</p>
                         ) : (
@@ -234,7 +268,7 @@ const CoinPage = () => {
                     <div className='w-1/5 flex flex-col items-center border border-secondary rounded-lg sm:text-lg text-xs'>
                       <div className='w-full border-b border-secondary flex justify-center font-semibold'>24h</div>
                       <div>{coin.market_data.price_change_percentage_24h_in_currency[currency] == null ? (
-                          <p></p>
+                          <p>-</p>
                         ) : coin.market_data.price_change_percentage_24h_in_currency[currency] > 0 ? (
                           <p class="text-green-600 font-semibold">{coin.market_data.price_change_percentage_24h_in_currency[currency].toFixed(2)}%</p>
                         ) : (
@@ -245,7 +279,7 @@ const CoinPage = () => {
                     <div className='w-1/5 flex flex-col items-center border border-secondary rounded-lg sm:text-lg text-xs'>
                       <div className='w-full border-b border-secondary flex justify-center font-semibold'>7D</div>
                       <div>{coin.market_data.price_change_percentage_7d_in_currency[currency] == null ? (
-                          <p></p>
+                          <p>-</p>
                         ) : coin.market_data.price_change_percentage_7d_in_currency[currency] > 0 ? (
                           <p class="text-green-600 font-semibold">{coin.market_data.price_change_percentage_7d_in_currency[currency].toFixed(2)}%</p>
                         ) : (
@@ -256,7 +290,7 @@ const CoinPage = () => {
                     <div className='w-1/5 flex flex-col items-center border border-secondary rounded-lg sm:text-lg text-xs'>
                       <div className='w-full border-b border-secondary flex justify-center font-semibold'>14D</div>
                       <div>{coin.market_data.price_change_percentage_14d_in_currency[currency] == null ? (
-                          <p></p>
+                          <p>-</p>
                         ) : coin.market_data.price_change_percentage_14d_in_currency[currency] > 0 ? (
                           <p class="text-green-600 font-semibold">{coin.market_data.price_change_percentage_14d_in_currency[currency].toFixed(2)}%</p>
                         ) : (
@@ -269,7 +303,7 @@ const CoinPage = () => {
                     <div className='w-1/5 flex flex-col items-center border border-secondary rounded-lg sm:text-lg text-xs'>
                       <div className='w-full border-b border-secondary flex justify-center font-semibold'>30D</div>
                       <div>{coin.market_data.price_change_percentage_30d_in_currency[currency] == null ? (
-                          <p></p>
+                          <p>-</p>
                         ) : coin.market_data.price_change_percentage_30d_in_currency[currency] > 0 ? (
                           <p class="text-green-600 font-semibold">{coin.market_data.price_change_percentage_30d_in_currency[currency].toFixed(2)}%</p>
                         ) : (
@@ -280,7 +314,7 @@ const CoinPage = () => {
                     <div className='w-1/5 flex flex-col items-center border border-secondary rounded-lg sm:text-lg text-xs'>
                       <div className='w-full border-b border-secondary flex justify-center font-semibold'>60D</div>
                       <div>{coin.market_data.price_change_percentage_60d_in_currency[currency] == null ? (
-                          <p></p>
+                          <p>-</p>
                         ) : coin.market_data.price_change_percentage_60d_in_currency[currency] > 0 ? (
                           <p class="text-green-600 font-semibold">{coin.market_data.price_change_percentage_60d_in_currency[currency].toFixed(2)}%</p>
                         ) : (
@@ -291,7 +325,7 @@ const CoinPage = () => {
                     <div className='w-1/5 flex flex-col items-center border border-secondary rounded-lg sm:text-lg text-xs'>
                       <div className='w-full border-b border-secondary flex justify-center font-semibold'>200D</div>
                       <div>{coin.market_data.price_change_percentage_200d_in_currency[currency] == null ? (
-                          <p></p>
+                          <p>-</p>
                         ) : coin.market_data.price_change_percentage_200d_in_currency[currency] > 0 ? (
                           <p class="text-green-600 font-semibold">{coin.market_data.price_change_percentage_200d_in_currency[currency].toFixed(2)}%</p>
                         ) : (
@@ -302,7 +336,7 @@ const CoinPage = () => {
                     <div className='w-1/5 flex flex-col items-center border border-secondary rounded-lg sm:text-lg text-xs'>
                       <div className='w-full border-b border-secondary flex justify-center font-semibold'>1Y</div>
                       <div>{coin.market_data.price_change_percentage_1y_in_currency[currency] == null ? (
-                          <p></p>
+                          <p>-</p>
                         ) : coin.market_data.price_change_percentage_1y_in_currency[currency] > 0 ? (
                           <p class="text-green-600 font-semibold">{coin.market_data.price_change_percentage_1y_in_currency[currency].toFixed(2)}%</p>
                         ) : (
@@ -323,7 +357,7 @@ const CoinPage = () => {
                         <p>Market Cap Rank</p>
                       </td>
                       <td>
-                        <p className='flex'>#{coin.market_data.market_cap_rank}</p>
+                        <p className='flex'>{coin.market_data.market_cap_rank != null ? "#"+coin.market_data.market_cap_rank : "-"}</p>
                       </td>
                     </tr>
                     <tr className='py-2 border-b border-secondary flex justify-between'>
@@ -331,7 +365,9 @@ const CoinPage = () => {
                         <p>{coin.name} Price</p>
                       </td>
                       <td>
+                        {coin.market_data.current_price[currency] != null ? (
                         <p className='flex'>{coin.market_data.current_price[currency] > 1 ? coin.market_data.current_price[currency].toLocaleString('pl-PL') : coin.market_data.current_price[currency]} {currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
+                        ) : ("-")}
                       </td>
                     </tr>
                     <tr className='py-2 border-b border-secondary flex justify-between'>
@@ -339,11 +375,13 @@ const CoinPage = () => {
                         <p>24h Low / 24h High</p>
                       </td>
                       <td>
-                        <p className='flex'>
-                          {coin.market_data.low_24h[currency] > 1 ? coin.market_data.low_24h[currency].toLocaleString('pl-PL') : coin.market_data.low_24h[currency]}&nbsp;/&nbsp;
-                          {coin.market_data.high_24h[currency] > 1 ? coin.market_data.high_24h[currency].toLocaleString('pl-PL') : coin.market_data.high_24h[currency]} 
-                          {currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}
-                        </p>
+                        {coin.market_data.low_24h[currency] != null && coin.market_data.high_24h[currency] != null ? (
+                          <p className='flex'>
+                            {coin.market_data.low_24h[currency] > 1 ? coin.market_data.low_24h[currency].toLocaleString('pl-PL') : coin.market_data.low_24h[currency]}&nbsp;/&nbsp;
+                            {coin.market_data.high_24h[currency] > 1 ? coin.market_data.high_24h[currency].toLocaleString('pl-PL') : coin.market_data.high_24h[currency]} 
+                            {currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}
+                          </p>
+                        ) : (<p>-</p>)}
                       </td>
                     </tr>
                     <tr className='py-2 border-b border-secondary flex justify-between'>
@@ -351,7 +389,9 @@ const CoinPage = () => {
                         <p>Trading Volume</p>
                       </td>
                       <td>
+                        {coin.market_data.total_volume[currency] != null ? (
                         <p className='flex'>{coin.market_data.total_volume[currency] > 1 ? coin.market_data.total_volume[currency].toLocaleString('pl-PL') : coin.market_data.total_volume[currency]}{currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
+                        ) : ("-")}
                       </td>
                     </tr>
                     <tr className='py-2 border-b border-secondary flex justify-between'>
@@ -359,7 +399,9 @@ const CoinPage = () => {
                         <p>Market Cap</p>
                       </td>
                       <td>
-                        <p className='flex'>{coin.market_data.market_cap[currency] > 1 ? coin.market_data.market_cap[currency].toLocaleString('pl-PL') : coin.market_data.market_cap[currency]}{currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
+                        {coin.market_data.market_cap[currency] != null ? (
+                          <p className='flex'>{coin.market_data.market_cap[currency] > 1 ? coin.market_data.market_cap[currency].toLocaleString('pl-PL') : coin.market_data.market_cap[currency]}{currency == "usd" ? (<p>&nbsp;$</p>) : (<p>&nbsp;zł</p>)}</p>
+                        ) : ("-")}
                       </td>
                     </tr>
                     <tr className='py-2 border-b border-secondary flex justify-between'>
@@ -367,7 +409,7 @@ const CoinPage = () => {
                         <p>Circulating Supply</p>
                       </td>
                       <td>
-                        {coin.market_data.circulating_supply?.toLocaleString('pl-PL')}
+                        {coin.market_data.circulating_supply != null ? coin.market_data.circulating_supply.toLocaleString('pl-PL') : "-"}
                       </td>
                     </tr>
                     <tr className='py-2 border-b border-secondary flex justify-between'>
@@ -375,7 +417,7 @@ const CoinPage = () => {
                         <p>Total Supply</p>
                       </td>
                       <td>
-                        {coin.market_data.total_supply?.toLocaleString('pl-PL')}
+                        {coin.market_data.total_supply != null ? coin.market_data.total_supply.toLocaleString('pl-PL') : "-"}
                       </td>
                     </tr>
                     <tr className='py-2 border-b border-secondary flex justify-between'>
@@ -383,7 +425,7 @@ const CoinPage = () => {
                         <p>Max Supply</p>
                       </td>
                       <td>
-                        {coin.market_data.max_supply?.toLocaleString('pl-PL')}
+                        {coin.market_data.max_supply != null ? coin.market_data.max_supply.toLocaleString('pl-PL') : "-"}
                       </td>
                     </tr>
                     <tr className='py-2 border-b border-secondary flex justify-between'>
