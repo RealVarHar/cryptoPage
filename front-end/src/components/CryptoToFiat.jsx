@@ -65,6 +65,22 @@ const CryptoToFiat = () => {
                         <select defaultValue={"usd"} className='w-2/3 sm:w-full h-8 md:h-10 bg-primary border border-secondary rounded-2xl shadow-xl' onChange={(event) => {setCurrency(event.target.value)}}>
                             <option className='flex items-center text-center' value={"usd"}>&nbsp;USD&nbsp;&nbsp;&nbsp;United States Dollar "$"</option>
                             <option className='flex items-center text-center' value={"pln"}>&nbsp;PLN&nbsp;&nbsp;&nbsp;Polish Złoty "zł"</option>
+                            <option className='flex items-center text-center' value={"usd"}>&nbsp;USD&nbsp;&nbsp;&nbsp;United States Dollar</option>
+                            <option className='flex items-center text-center' value={"pln"}>&nbsp;PLN&nbsp;&nbsp;&nbsp;Polish Złoty</option>
+                            <option className='flex items-center text-center' value={"eur"}>&nbsp;EUR&nbsp;&nbsp;&nbsp;Euro</option>
+                            <option className='flex items-center text-center' value={"gbp"}>&nbsp;GBP&nbsp;&nbsp;&nbsp;Pound Sterling</option>
+                            <option className='flex items-center text-center' value={"chf"}>&nbsp;CHF&nbsp;&nbsp;&nbsp;Swiss Franc</option>
+                            <option className='flex items-center text-center' value={"cny"}>&nbsp;CNY&nbsp;&nbsp;&nbsp;Chinese Yuan</option>
+                            <option className='flex items-center text-center' value={"nok"}>&nbsp;NOK&nbsp;&nbsp;&nbsp;Norwegian Krone</option>
+                            <option className='flex items-center text-center' value={"sek"}>&nbsp;SEK&nbsp;&nbsp;&nbsp;Swedish Krona</option>
+                            <option className='flex items-center text-center' value={"czk"}>&nbsp;CZK&nbsp;&nbsp;&nbsp;Czech Koruna</option>
+                            <option className='flex items-center text-center' value={"dkk"}>&nbsp;DKK&nbsp;&nbsp;&nbsp;Danish Krone</option>
+                            <option className='flex items-center text-center' value={"krw"}>&nbsp;KRW&nbsp;&nbsp;&nbsp;South Korean Won</option>
+                            <option className='flex items-center text-center' value={"uah"}>&nbsp;UAH&nbsp;&nbsp;&nbsp;Ukrainian Hryvnia</option>
+                            <option className='flex items-center text-center' value={"rub"}>&nbsp;RUB&nbsp;&nbsp;&nbsp;Russian Ruble</option>
+                            <option className='flex items-center text-center' value={"jpy"}>&nbsp;JPY&nbsp;&nbsp;&nbsp;Japanese Yen</option>
+                            <option className='flex items-center text-center' value={"cad"}>&nbsp;CAD&nbsp;&nbsp;&nbsp;Canadian Dollar</option>
+                            <option className='flex items-center text-center' value={"mxn"}>&nbsp;MXN&nbsp;&nbsp;&nbsp;Mexican Peso</option>
                         </select>
                     )}
                     
@@ -92,6 +108,7 @@ const CryptoToFiat = () => {
                             <option className='flex items-center text-center' value={"rub"}>&nbsp;RUB&nbsp;&nbsp;&nbsp;Russian Ruble</option>
                             <option className='flex items-center text-center' value={"jpy"}>&nbsp;JPY&nbsp;&nbsp;&nbsp;Japanese Yen</option>
                             <option className='flex items-center text-center' value={"cad"}>&nbsp;CAD&nbsp;&nbsp;&nbsp;Canadian Dollar</option>
+                            <option className='flex items-center text-center' value={"mxn"}>&nbsp;MXN&nbsp;&nbsp;&nbsp;Mexican Peso</option>
                         </select>
                     ) : (
                         <select className='w-2/3 sm:w-full h-8 md:h-10 bg-primary border border-secondary rounded-2xl shadow-xl' value={coinName} onChange={handleChangeCoinPrice}>
