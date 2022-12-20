@@ -12,7 +12,7 @@ const Coins = () => {
   const [perPage, setPerPage] = useState(10);
   const [currency, setCurrency] = useState('usd');
 
-  const url = `http://127.0.0.1/searchCoin`;//?vs_currency=${currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`
+  const url = document.location.origin+`/searchCoin`;//?vs_currency=${currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`
   
   useEffect(() => {
     setIsLoading(true);

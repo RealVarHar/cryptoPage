@@ -278,7 +278,7 @@ async function getcoins(ids=[],days){
         let map={};
         for(let coin of updateCoins){
             map[coin.id]=coin;
-            let coinToUpdate=structuredClone(coin);
+            let coinToUpdate=global.structuredClone(coin);
             delete coinToUpdate.sparkline;
             updateCoin(coinToUpdate);
         }

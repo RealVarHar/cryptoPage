@@ -11,6 +11,31 @@ import crypto from 'crypto';
 global.database=database;
 import coingetter from "./coingetter.js";
 coingetter.refreshList();
+let majorversion=parseInt(process.version.substr(1).split('.',1)[0]);
+if(majorversion<17){
+  global.structuredClone=function(json){
+    if(json==null)return 'null';
+    if(json instanceof Date) return new Date(json);
+    if(typeof(json)!="object"){
+        return json;
+    }
+    if(Array.isArray(json)){
+        let ret=new Array(json.length);
+        for(let i in json){
+          ret[i]=global.structuredClone(json[i]);
+        }
+        return ret;
+    }else{
+        let ret={};
+        for(let i in json){
+          ret[i]=global.structuredClone(json[i]);
+        }
+        return ret;
+    }
+  }
+}else{
+  global.structuredClone=structuredClone;
+}
 var arg={};
 for(let i=2;i<process.argv.length;i++) {
     if(process.argv[i][0]=="-") {
