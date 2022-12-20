@@ -1,3 +1,5 @@
+.glitchdotcom.json
+.node-gyp
 /babel-cache/**
 server/database.db
 server/database.db-shm
