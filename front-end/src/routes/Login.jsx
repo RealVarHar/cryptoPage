@@ -1,8 +1,8 @@
 let useState=React.useState;
 let Link=ReactRouterDOM.Link;
-import Footer from '../components/Footer.jsx'
+import Footer from '../components/Footer.jsx';
 let logo='/images/logo.png';
-import axios from '/third-party/esm/axios.min.js'
+import axios from '/third-party/esm/axios.min.js';
 
 function getHash(str, algo = "SHA-256") {
 	return crypto.subtle.digest(algo, Uint8Array.from(str)).then(hash => {
@@ -11,18 +11,31 @@ function getHash(str, algo = "SHA-256") {
 }
 
 const Login = () => {
+    const [getUserName,setUserName]=useState('');
     let navigate=ReactRouterDOM.useNavigate();
+    function store_cookie(cookieName,value) {
+        var date=new Date();
+        date.setDate(date.getDate()+1);
+        var expires='; expires='+date.toGMTString();
+        let cookie=structuredClone(value);
+        document.cookie=cookieName+'='+encodeURIComponent(JSON.stringify(cookie))+expires+";path=/";
+    }
     const login=(e)=>{
         e.preventDefault();
         let inputs=document.getElementById('loginForm').getElementsByTagName('input');
         inputs=[...inputs].map(a=>a.value);
         getHash(inputs[1]).then((password)=>{
             axios.post(window.location.origin+"/login",{user:inputs[0],password}).then((response) => {
-                if(response.status==200)
-                navigate("/home");
+                if(response.status==200){
+                    store_cookie("authToken",{user: inputs[0],password});
+                    window.loggedAs=inputs[0];
+                    navigate("/home");
+                }
             });
         })
     }
+    store_cookie("authToken",false);
+    delete window.loggedAs;
     const signup=(e)=>{
         e.preventDefault();
         let inputs=document.getElementById('registryForm').getElementsByTagName('input');

@@ -57,7 +57,7 @@ async function getTempCoin(ids=[]){
         date=new Date(date.getUTCFullYear(),date.getMonth(),date.getDate(),date.getHours());
         for(let price of sparkline){
             let tag=date.getFullYear()+":"+toolbox.toYearDay(date);
-            if(days[tag]==undefined)days[tag]={};
+            if(days[tag]==undefined)days[tag]=[];
             days[tag][date.getHours()]=price;
             date.setHours(date.getHours()-1);
         }
@@ -204,7 +204,7 @@ async function getPersistantCoin(id="",uptoDate){
     updateCoin(coin);
     return coin;
 }
-function limitSparkline(sparkline,days){
+function limitSparkline(sparkline={},days){
     let repack={};
     let missingDates=[];
     let newestDate=0;
@@ -291,11 +291,15 @@ async function getcoins(ids=[],days){
     }
     for(let coin of coins){
         //combine sparkline or use one of them depending on days
-        let combine=limitSparkline(coin.sparkline,days);
-        coin.sparkline=combine.repack;
-        let cache=getCache(coin.id,combine.missingDates,combine.newestDate,coin.last_sparkline_update);
-        for(let key in cache){
-            coin.sparkline[key]=cache[key];
+        try{
+            let combine=limitSparkline(coin.sparkline,days);
+            coin.sparkline=combine.repack;
+            let cache=getCache(coin.id,combine.missingDates,combine.newestDate,coin.last_sparkline_update);
+            for(let key in cache) {
+                coin.sparkline[key]=cache[key];
+            }
+        }catch(e){
+            console.log(e);
         }
     }
     return coins;
