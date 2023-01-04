@@ -137,9 +137,16 @@ app.post('/checkLogin',async (req,res) => {
     return userTaken!=undefined;
 });
 app.post('/searchCoin',async (req,res)=>{
-    let parameters={limit:"int",name:"string",dates:["date"]};
+    let parameters={limit:"int",name:"string",dates:["date"],sorting:"string"};
     getBody(parameters,req.body,false);
-    return coingetter.search(parameters.name,parameters.limit,parameters.dates);
+    let order="desc";
+    if(parameters.sorting.endsWith("_desc")) parameters.sorting=parameters.sorting.slice(0,-"_desc".length);
+    if(parameters.sorting.endsWith("_asc")){
+        parameters.sorting=parameters.sorting.slice(0,-"_desc".length);
+        order="asc";
+    }
+    if(!["id","market_cap","name","symbol"].includes(parameters.sorting)) parameters.sorting="market_cap";
+    return coingetter.search(parameters.name,parameters.limit,parameters.dates,parameters.sorting,order);
 });
 app.listen({port: arg.httpsPort,host: arg.ip},() => {
     console.log(`Server ${process.pid} started`)

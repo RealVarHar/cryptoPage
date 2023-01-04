@@ -67,8 +67,10 @@ if(!tableNames.includes('coinsSparkline')){
     query("CREATE TABLE coinsSparkline (id TEXT NOT NULL, year Integer NOT NULL,day Integer NOT NULL,prices BLOB, PRIMARY KEY ( id, year,day))");
 }
 if(!tableNames.includes('coins')){
-    query("CREATE TABLE coins (id TEXT PRIMARY KEY,last_update Integer,last_sparkline_update Integer,price Real,market_cap Integer, data BLOB )");
+    query("CREATE TABLE coins (id TEXT PRIMARY KEY,symbol TEXT,name TEXT,last_update Integer,last_sparkline_update Integer,price Real,market_cap Integer, data BLOB )");
     query("create index _sparklineOrder on coins(market_cap)");
+    query("create index _sparklineOrder2 on coins(symbol)");
+    query("create index _sparklineOrder3 on coins(name)");
 }
 let config={};
 if(!tableNames.includes('config')){

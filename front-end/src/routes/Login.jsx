@@ -43,8 +43,11 @@ const Login = () => {
         if(inputs[1]!=inputs[2])return;
         getHash(inputs[1]).then((password)=>{
             axios.post(window.location.origin+"/register",{user:inputs[0],password}).then((response) => {
-                if(response.status==200)
-                navigate("/home");
+                if(response.status==200){
+                    store_cookie("authToken",{user: inputs[0],password});
+                    window.loggedAs=inputs[0];
+                    navigate("/home");
+                }
             });
         })
     }
