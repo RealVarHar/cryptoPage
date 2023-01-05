@@ -195,8 +195,8 @@ const Coins = () => {
                     <p class="text-red-600">{coin.price_change_percentage_7d_in_currency.toFixed(2)}%</p>
                   )}
                 </td>
-                <td class="p-2 text-right hidden lg:table-cell">{(coin.total_volume==null?0:coin.total_volume).toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
-                <td class="p-2 text-right hidden md:table-cell">{(coin.market_cap==null?0:coin.market_cap).toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
+                <td class="p-2 text-right hidden lg:table-cell whitespace-nowrap">{(coin.total_volume==null?0:coin.total_volume).toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
+                <td class="p-2 text-right hidden md:table-cell whitespace-nowrap">{(coin.market_cap==null?0:coin.market_cap).toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
                 <td className=''>
                   {coin.price_change_percentage_7d_in_currency > 0 ? (
                     <Sparklines data={coin.sparkline}>
