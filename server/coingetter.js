@@ -48,9 +48,10 @@ function updateCoin(coin){
         if(insert.length>0)database.query("insert into coinsSparkline (id,year,day,prices) values "+toolbox.qrepeat("(?,?,?,?)",Object.values(coin.sparkline).length)+" on conflict(id,year,day) do update set prices=excluded.prices",insert);
     }
 }
-async function getTempCoin(ids=[]){
+async function getTempCoin(ids=[],sorting="market_cap_desc"){
     if(ids.length>250||fethes.used>=fethes.max)return false;
     //return coins like checkcache would return. sparkline can be wrong
+    if(!sorting.endsWith("_asc")&&!sorting.endsWith("_desc"))sorting+="_desc";
     function classifyDates(sparkline){
         let days={};
         let date=new Date();
@@ -94,7 +95,7 @@ async function getTempCoin(ids=[]){
         }
         return days;
     }
-    let parameters={vs_currency:"usd",sparkline:true,per_page:ids.length==0?250:ids.length,price_change_percentage:"1h,24h,7d"};
+    let parameters={vs_currency: "usd",sparkline: true,per_page: ids.length==0? 250:ids.length,price_change_percentage: "1h,24h,7d",order: sorting};
     if(ids.length!=0)parameters['ids']=ids;
     fethes.used++;
     logApi();
@@ -104,12 +105,11 @@ async function getTempCoin(ids=[]){
     let coins=[];
     for(let row of res.data){
         coins.push({
-            id:row.id,
+            id:row.id,name:row.name,symbol:row.symbol,
             last_update:Math.floor((new Date()).getTime()/60000),
             price:row.current_price,market_cap:row.market_cap,
             data:{
                 image:row.image.replace(/\?\d*$/,''),
-                name:row.name,symbol:row.symbol,
                 price_change_percentage_1h_in_currency:row.price_change_percentage_1h_in_currency,
                 price_change_percentage_24h_in_currency:row.price_change_percentage_24h_in_currency,
                 price_change_percentage_7d_in_currency:row.price_change_percentage_7d_in_currency,
@@ -260,21 +260,21 @@ function getCache(coinId,days=[],newestDate,last_sparkline_update){
     }
     return sparkline;
 }
-async function getcoins(ids=[],days){
+async function getcoins(ids=[],days,sorting,sorting_order){
     //get all info about coins
     let lastminute=new Date();
     lastminute=Math.floor(lastminute.getTime()/60000);//update every minute
     let lastday=Math.floor(lastminute/1440);
     let coins;
     if(typeof(ids)=='string'){
-        coins=database.queryRows("select id,last_update,last_sparkline_update,price,market_cap, data from coins where id like '%"+ids+"%' limit 250",[]);
+        coins=database.queryRows("select id,name,symbol,last_update,last_sparkline_update,price,market_cap, data from coins where id like '%"+ids+"%' order by market_cap desc limit 250",[]);
     }else{
-        coins=database.queryRows("select id,last_update,last_sparkline_update,price,market_cap, data from coins where id in ("+toolbox.qrepeat('?',ids.length)+") limit 250",ids);
+        coins=database.queryRows("select id,name,symbol,last_update,last_sparkline_update,price,market_cap, data from coins where id in ("+toolbox.qrepeat('?',ids.length)+") limit 250",ids);
     }
     let oldCoins=coins.filter(a=>a.last_update<lastminute||a.last_sparkline_update<lastday).map(a=>a.id);
     if(oldCoins.length>0){
-        let awaitingupdate=database.queryRows("select id from coins where last_update<? order by market_cap limit ?",[lastminute,250]).filter(a=>!oldCoins.includes(a.id));
-        let updateCoins=await getTempCoin(oldCoins.concat(awaitingupdate.slice(0,250-oldCoins.length)));
+        let awaitingupdate=database.queryRows("select id from coins where last_update<? order by "+sorting+" "+sorting_order+" limit ?",[lastminute,250]).filter(a=>!oldCoins.includes(a.id));
+        let updateCoins=await getTempCoin(oldCoins.concat(awaitingupdate.slice(0,250-oldCoins.length)),sorting+"_"+sorting_order);
         let map={};
         for(let coin of updateCoins){
             map[coin.id]=coin;
@@ -328,11 +328,11 @@ async function refreshList(){
     freshList=freshList.data;
     let missing=[];
     for(let coin of freshList){
-        if(!list[coin.id])missing.push([coin.id,0,0,0,0,{}]);
+        if(!list[coin.id]) missing.push([coin.id,coin.name,coin.symbol,0,0,0,0,{}]);
     }
-    for(let i=0;i<missing.length;i+=250){
+    for(let i=0;i<missing.length;i+=250) {
         let part_misssing=missing.slice(i,i+250);
-        database.query("insert into coins (id,last_update,last_sparkline_update,price,market_cap, data) values "+toolbox.qrepeat("(?,?,?,?,?,?)",part_misssing.length),part_misssing.reduce((o,i)=>{o.push(...i);return o},[]));
+        database.query("insert into coins (id,name,symbol,last_update,last_sparkline_update,price, market_cap,data) values "+toolbox.qrepeat("(?,?,?,?,?,?,?,?)",part_misssing.length),part_misssing.reduce((o,i) => {o.push(...i); return o},[]));
     }
 }
 //sheduler function used beause of time and api calls restrictions
@@ -358,40 +358,47 @@ async function askforCoin(){
 }
 let fethes={used:0,max:10,maxrisk:1,clock:0,scheduled:[],running:false}
 fethes.clock=setTimeout(askforCoin,60000/fethes.max);
-async function getDefault250(){
+async function getDefault250(sorting,sorting_order){
     //returns names of any 250 sorted by marketcap
     let lastminute=new Date();
     lastminute=Math.floor(lastminute.getTime()/60000);//update every minute
-    let coins=database.queryRows("select id from coins where market_cap!=0 order by market_cap desc limit 250").map(a=>a.id);
+    let coins=database.queryRows("select id from coins where market_cap!=0 order by "+sorting+" "+sorting_order+" limit 250",[]).map(a=>a.id);
     if(coins.length<250){
-        let coindata=await getTempCoin();//getMarkets
+        let coindata=await getTempCoin(undefined,sorting+"_"+sorting_order);//getMarkets
         for(let coin of coindata)updateCoin(coin);
         coins=coindata.map(a=>a.id);
         return coins;
     }
     return coins;
 }
-async function search(names=null,limit=250,days=[]){
+async function search(names=null,limit=250,days=[],sorting="market_cap",sorting_order="desc"){
     console.log("search"+names+limit+JSON.stringify(days));
-    if(names==null)names="";
-    if(limit==null)limit=250;
-    if(days==null)days=[];
-    if(days.length==0){
+    try{
+    if(names==null) names="";
+    if(limit==null) limit=250;
+    if(days==null) days=[];
+    if(days.length==0) {
         let day=new Date();
-        for(let i=0;i<7;i++){
+        for(let i=0;i<7;i++) {
             days.push(new Date(day));
             day.setDate(day.getDate()-1);
         }
     }
-    if(sharedTransaction==0)database.query("BEGIN TRANSACTION");
+    if(sharedTransaction==0) database.query("BEGIN TRANSACTION");
     sharedTransaction++;
-    if(names.length==0){
-        names=await getDefault250();
+    if(names.length==0) {
+        names=await getDefault250(sorting,sorting_order);
     }
-    let result=await getcoins(names,days);
+    let result=await getcoins(names,days,sorting,sorting_order);
     sharedTransaction--;
-    if(sharedTransaction==0)database.query("COMMIT TRANSACTION");
-    result=result.sort((a,b)=>b.market_cap-a.market_cap).slice(0,limit);
+    if(sharedTransaction==0) database.query("COMMIT TRANSACTION");
+    result=result.sort((a,b) => (sorting_order=="desc"?1:-1)*(b[sorting]-a[sorting])).slice(0,limit);
+
     return result;
+    }catch(e){
+        console.log(e);
+        throw e;
+    }
+    
 }
 export default {search,refreshList};

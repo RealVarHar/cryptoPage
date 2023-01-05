@@ -75,7 +75,9 @@ const Login = () => {
                     setLogin1(false)
                     setLogin2(false)
                     setIsLogin(true)
-                    navigate("/");
+                    store_cookie("authToken",{user: inputs[0],password});
+                    window.loggedAs=inputs[0];
+                    navigate("/home");
                 }
             });
         })
