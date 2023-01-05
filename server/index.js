@@ -140,6 +140,7 @@ app.post('/searchCoin',async (req,res)=>{
     let parameters={limit:"int",name:"string",dates:["date"],sorting:"string"};
     getBody(parameters,req.body,false);
     let order="desc";
+    if(parameters.sorting==null) parameters.sorting="";
     if(parameters.sorting.endsWith("_desc")) parameters.sorting=parameters.sorting.slice(0,-"_desc".length);
     if(parameters.sorting.endsWith("_asc")){
         parameters.sorting=parameters.sorting.slice(0,-"_desc".length);

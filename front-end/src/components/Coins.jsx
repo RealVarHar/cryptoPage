@@ -14,103 +14,44 @@ const Coins = () => {
   const [sort, setSort] = useState('rankAsc');
 
   const url = document.location.origin+`/searchCoin`;//?vs_currency=${currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`
-  
-  useEffect(() => {
+  if(window.cacheresponce==undefined)window.cacheresponce={name:"",response:""};
+  useEffect(()=>{
+    (async () => {
     setIsLoading(true);
-    let parameters={limit:perPage};
+    let parameters={limit:250};
     if(searchText!="")parameters.name=searchText;
-    axios.post(url,parameters).then((response) => {
-      for(let coin of response.data){
+    let response=window.cacheresponce.response;
+      if(window.cacheresponce.name!=parameters.name||window.cacheresponce.response=="") response=await axios.post(url,parameters);
+      window.cacheresponce={name: parameters.name,response: {data:structuredClone(response.data)}};
+      let responsedata=response.data.slice(0,perPage);
+      for(let coin of responsedata){
         coin.sparkline=Object.values(coin.sparkline).reduce((p,c)=>{p.push(...c);return p;},[]);
         for(let key in coin.data){
           coin[key]=coin.data[key];
         }
         coin.current_price=coin.price;
       }
-      if(sort == 'rankAsc') {
-        response.data.sort((a, b) => {
-          if (a.market_cap_rank === null && b.market_cap_rank === null) return 0;
-          if (a.market_cap_rank === null) return 1;
-          if (b.market_cap_rank === null) return -1;
-          return a.market_cap_rank - b.market_cap_rank;
-        })
-      }
-      if(sort == 'rankDesc') {
-        response.data.sort((a, b) => {
-          if (a.market_cap_rank === null && b.market_cap_rank === null) return 0;
-          if (a.market_cap_rank === null) return 1;
-          if (b.market_cap_rank === null) return -1;
-          return b.market_cap_rank - a.market_cap_rank;
-        })
-      }
-      if(sort == 'nameAsc') {
-        response.data.sort((a, b) => {
-          if (a.name === null && b.name === null) return 0;
-          if (a.name === null) return 1;
-          if (b.name === null) return -1;
-          return a.name.localeCompare(b.name)
-        })
-      }
-      if(sort == 'nameDesc') {
-        response.data.sort((a, b) => {
-          if (a.name === null && b.name === null) return 0;
-          if (a.name === null) return 1;
-          if (b.name === null) return -1;
-          return b.name.localeCompare(a.name)
-        })
-      }
-      if(sort == 'priceAsc') {
-        response.data.sort((a, b) => {
-          if (a.current_price === null && b.current_price === null) return 0;
-          if (a.current_price === null) return 1;
-          if (b.current_price === null) return -1;
-          return a.current_price - b.current_price;
-        })
-      }
-      if(sort == 'priceDesc') {
-        response.data.sort((a, b) => {
-          if (a.current_price === null && b.current_price === null) return 0;
-          if (a.current_price === null) return 1;
-          if (b.current_price === null) return -1;
-          return b.current_price - a.current_price;
-        })
-      }
-      if(sort == '24HAsc') {
-        response.data.sort((a, b) => {
-          if (a.price_change_percentage_24h_in_currency === null && b.price_change_percentage_24h_in_currency === null) return 0;
-          if (a.price_change_percentage_24h_in_currency === null) return 1;
-          if (b.price_change_percentage_24h_in_currency === null) return -1;
-          return a.price_change_percentage_24h_in_currency.toFixed(2) - b.price_change_percentage_24h_in_currency.toFixed(2);
-        })
-      }
-      if(sort == '24HDesc') {
-        response.data.sort((a, b) => {
-          if (a.price_change_percentage_24h_in_currency === null && b.price_change_percentage_24h_in_currency === null) return 0;
-          if (a.price_change_percentage_24h_in_currency === null) return 1;
-          if (b.price_change_percentage_24h_in_currency === null) return -1;
-          return b.price_change_percentage_24h_in_currency.toFixed(2) - a.price_change_percentage_24h_in_currency.toFixed(2);
-        })
-      }
-      if(sort == '7DAsc') {
-        response.data.sort((a, b) => {
-          if (a.price_change_percentage_7d_in_currency === null && b.price_change_percentage_7d_in_currency === null) return 0;
-          if (a.price_change_percentage_7d_in_currency === null) return 1;
-          if (b.price_change_percentage_7d_in_currency === null) return -1;
-          return a.price_change_percentage_7d_in_currency.toFixed(2) - b.price_change_percentage_7d_in_currency.toFixed(2);
-        })
-      }
-      if(sort == '7DDesc') {
-        response.data.sort((a, b) => {
-          if (a.price_change_percentage_7d_in_currency === null && b.price_change_percentage_7d_in_currency === null) return 0;
-          if (a.price_change_percentage_7d_in_currency === null) return 1;
-          if (b.price_change_percentage_7d_in_currency === null) return -1;
-          return b.price_change_percentage_7d_in_currency.toFixed(2) - a.price_change_percentage_7d_in_currency.toFixed(2);
-        })
-      }
-      setCoins(response.data)
-      setIsLoading(false)
-    })
-  }, [url,searchText,perPage,sort] );
+      let sortby="",sortOrder=1;
+      if(sort=='rankAsc') {sortby="market_cap_rank"; sortOrder=1;}
+      if(sort=='rankDesc') {sortby="market_cap_rank"; sortOrder=-1;}
+      if(sort=='nameAsc') {sortby="name"; sortOrder=1;}
+      if(sort=='nameDesc') {sortby="name"; sortOrder=-1;}
+      if(sort=='priceAsc') {sortby="current_price"; sortOrder=1;}
+      if(sort=='priceDesc') {sortby="current_price"; sortOrder=-1;}
+      if(sort=='24HAsc') {sortby="price_change_percentage_24h_in_currency"; sortOrder=1;}
+      if(sort=='24HDesc') {sortby="price_change_percentage_24h_in_currency"; sortOrder=-1;}
+      if(sort=='7DAsc') {sortby="price_change_percentage_7d_in_currency"; sortOrder=1;}
+      if(sort=='7DDesc') {sortby="price_change_percentage_7d_in_currency"; sortOrder=-1;}
+      responsedata.sort((a,b) => {
+        if(a[sortby]===null&&b[sortby]===null) return 0;
+        if(a[sortby]===null) return 1;
+        if(b[sortby]===null) return -1;
+        return sortOrder*(a[sortby]-b[sortby]);
+      });
+      setCoins(responsedata);
+      setIsLoading(false);
+
+  })()}, [url,searchText,perPage,sort] );
   
   useEffect(() => {
     if(typeWaiter!==false){
