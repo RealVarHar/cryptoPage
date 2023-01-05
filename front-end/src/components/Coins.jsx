@@ -11,6 +11,7 @@ const Coins = () => {
   const [searchTextProxy, setSearchTextProxy] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [currency, setCurrency] = useState('usd');
+  const [sort, setSort] = useState('rankAsc');
 
   const url = document.location.origin+`/searchCoin`;//?vs_currency=${currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`
   
@@ -26,10 +27,90 @@ const Coins = () => {
         }
         coin.current_price=coin.price;
       }
+      if(sort == 'rankAsc') {
+        response.data.sort((a, b) => {
+          if (a.market_cap_rank === null && b.market_cap_rank === null) return 0;
+          if (a.market_cap_rank === null) return 1;
+          if (b.market_cap_rank === null) return -1;
+          return a.market_cap_rank - b.market_cap_rank;
+        })
+      }
+      if(sort == 'rankDesc') {
+        response.data.sort((a, b) => {
+          if (a.market_cap_rank === null && b.market_cap_rank === null) return 0;
+          if (a.market_cap_rank === null) return 1;
+          if (b.market_cap_rank === null) return -1;
+          return b.market_cap_rank - a.market_cap_rank;
+        })
+      }
+      if(sort == 'nameAsc') {
+        response.data.sort((a, b) => {
+          if (a.name === null && b.name === null) return 0;
+          if (a.name === null) return 1;
+          if (b.name === null) return -1;
+          return a.name.localeCompare(b.name)
+        })
+      }
+      if(sort == 'nameDesc') {
+        response.data.sort((a, b) => {
+          if (a.name === null && b.name === null) return 0;
+          if (a.name === null) return 1;
+          if (b.name === null) return -1;
+          return b.name.localeCompare(a.name)
+        })
+      }
+      if(sort == 'priceAsc') {
+        response.data.sort((a, b) => {
+          if (a.current_price === null && b.current_price === null) return 0;
+          if (a.current_price === null) return 1;
+          if (b.current_price === null) return -1;
+          return a.current_price - b.current_price;
+        })
+      }
+      if(sort == 'priceDesc') {
+        response.data.sort((a, b) => {
+          if (a.current_price === null && b.current_price === null) return 0;
+          if (a.current_price === null) return 1;
+          if (b.current_price === null) return -1;
+          return b.current_price - a.current_price;
+        })
+      }
+      if(sort == '24HAsc') {
+        response.data.sort((a, b) => {
+          if (a.price_change_percentage_24h_in_currency === null && b.price_change_percentage_24h_in_currency === null) return 0;
+          if (a.price_change_percentage_24h_in_currency === null) return 1;
+          if (b.price_change_percentage_24h_in_currency === null) return -1;
+          return a.price_change_percentage_24h_in_currency.toFixed(2) - b.price_change_percentage_24h_in_currency.toFixed(2);
+        })
+      }
+      if(sort == '24HDesc') {
+        response.data.sort((a, b) => {
+          if (a.price_change_percentage_24h_in_currency === null && b.price_change_percentage_24h_in_currency === null) return 0;
+          if (a.price_change_percentage_24h_in_currency === null) return 1;
+          if (b.price_change_percentage_24h_in_currency === null) return -1;
+          return b.price_change_percentage_24h_in_currency.toFixed(2) - a.price_change_percentage_24h_in_currency.toFixed(2);
+        })
+      }
+      if(sort == '7DAsc') {
+        response.data.sort((a, b) => {
+          if (a.price_change_percentage_7d_in_currency === null && b.price_change_percentage_7d_in_currency === null) return 0;
+          if (a.price_change_percentage_7d_in_currency === null) return 1;
+          if (b.price_change_percentage_7d_in_currency === null) return -1;
+          return a.price_change_percentage_7d_in_currency.toFixed(2) - b.price_change_percentage_7d_in_currency.toFixed(2);
+        })
+      }
+      if(sort == '7DDesc') {
+        response.data.sort((a, b) => {
+          if (a.price_change_percentage_7d_in_currency === null && b.price_change_percentage_7d_in_currency === null) return 0;
+          if (a.price_change_percentage_7d_in_currency === null) return 1;
+          if (b.price_change_percentage_7d_in_currency === null) return -1;
+          return b.price_change_percentage_7d_in_currency.toFixed(2) - a.price_change_percentage_7d_in_currency.toFixed(2);
+        })
+      }
       setCoins(response.data)
       setIsLoading(false)
     })
-  }, [url,searchText,perPage] );
+  }, [url,searchText,perPage,sort] );
   
   useEffect(() => {
     if(typeWaiter!==false){
@@ -49,6 +130,10 @@ const Coins = () => {
     setCurrency(event.target.value);
   };
 
+  const handleChangeSort = (event) => {
+    setSort(event.target.value);
+  };
+
   const renderTable = (
       <table className='w-full border-separate border-spacing-y-4'>
         <thead>
@@ -65,9 +150,7 @@ const Coins = () => {
           </tr>
         </thead>
         <tbody>
-          {coins.sort((a, b) => a.rank - b.rank)
-            .filter((value) => value.name.toLowerCase().includes(searchText.toLowerCase()) || value.symbol.toLowerCase().includes(searchText.toLowerCase()))
-            .map((coin) => (
+          {coins.map((coin) => (
               <tr key={coin.id} className='md:hover:scale-[1.03] shadow-xl rounded-lg h-16 overflow-hidden'>
                 <td className='pl-2'><p class="flex justify-center">{coin.market_cap_rank}</p></td>
                 <td>
@@ -144,19 +227,33 @@ const Coins = () => {
               placeholder='Search a coin' />
           </form>
         </div>
-        <div className='flex justify-end'>
-          <select defaultValue={10} className='h-10 bg-primary border border-secondary px-3 py-2 rounded-2xl shadow-xl mr-3' onChange={handleChangePerPage}>
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-            <option value={250}>250</option>
+        <div className='flex justify-between'>
+          <select defaultValue={"rankAsc"} className='h-10 bg-primary border border-secondary px-2 sm:px-3 py-1 rounded-2xl shadow-xl' onChange={handleChangeSort}>
+            <option value={"rankAsc"}>Rank ASC</option>
+            <option value={"rankDesc"}>Rank DESC</option>
+            <option value={"nameAsc"}>Name ASC</option>
+            <option value={"nameDesc"}>Name DESC</option>
+            <option value={"priceAsc"}>Price ASC</option>
+            <option value={"priceDesc"}>Price DESC</option>
+            <option className='hidden sm:flex' value={"24HAsc"}>24H ASC</option>
+            <option className='hidden sm:flex' value={"24HDesc"}>24H DESC</option>
+            <option className='hidden sm:flex' value={"7DAsc"}>7D ASC</option>
+            <option className='hidden sm:flex' value={"7DDesc"}>7D DESC</option>
           </select>
-          <select  defaultValue={"usd"} className='h-10 bg-primary border border-secondary px-3 py-2 rounded-2xl shadow-xl' onChange={handleChangeCurrency}>
-            <option value={"usd"}>USD</option>
-            <option value={"pln"}>PLN</option>
-          </select>
+          <div className='flex justify-end'>
+            <select defaultValue={10} className='h-10 bg-primary border border-secondary px-2 sm:px-3 py-1 rounded-2xl shadow-xl mr-2' onChange={handleChangePerPage}>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={250}>250</option>
+            </select>
+            <select defaultValue={"usd"} className='h-10 bg-primary border border-secondary px-2 sm:px-3 py-1 rounded-2xl shadow-xl' onChange={handleChangeCurrency}>
+              <option value={"usd"}>USD</option>
+              <option value={"pln"}>PLN</option>
+            </select>
+          </div>
         </div>
         {isLoading ? (
           <div class="h-64 flex items-center justify-evenly">
