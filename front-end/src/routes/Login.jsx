@@ -31,6 +31,8 @@ const Login = () => {
                     window.loggedAs=inputs[0];
                     navigate("/home");
                 }
+            }).catch((error) => {
+                setErrorMessage('Invalid username or password!!!')
             });
         })
     }
@@ -79,6 +81,8 @@ const Login = () => {
                     window.loggedAs=inputs[0];
                     navigate("/home");
                 }
+            }).catch((error) => {
+                setErrorMessage('The username you entered is already taken!!!')
             });
         })
     }
@@ -139,7 +143,7 @@ const Login = () => {
     const renderLogin = (
         <div className='mb-3 sm:my-8 border border-secondary shadow-[#aaaaaa] p-4 rounded-2xl shadow-sm bg-primary flex flex-col items-center'>
             <img src={logo} alt="Logo" className='pt-4 sm:pt-8 w-56 max-w-lg sm:w-4/6'></img>
-            <div className='py-4 sm:py-8 w-2/5 min-w-min'>
+            <div className='pt-4 sm:pt-8 w-2/5 min-w-min'>
                 <form id='loginForm' className='flex flex-col font-medium items-center'>
                     <label className='pb-4 text-base sm:text-xl'>Login</label>
                     <input ref={el => inputRefs.current[0] = el} className='text-xs sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="text" />
@@ -147,6 +151,11 @@ const Login = () => {
                     <input ref={el => inputRefs.current[1] = el} className='text-xs sm:text-base border border-secondary shadow-[#aaaaaa] p-2 px-4 rounded-2xl shadow-sm bg-primary w-48 sm:w-max' type="password" />
                 </form>
             </div>
+            {errorMessage ? (
+                <div className="text-[12px] sm:text-[16px] py-2 sm:py-3 text-red-700 dark:text-red-500 text-center">{errorMessage}</div>
+            ) : (
+                <div className="py-2 sm:py-3"></div>
+            )}
             <div className='pb-4 sm:pb-8'>
                 <button onClick={login} className='text-sm sm:text-lg py-2 px-4 sm:py-3 sm:px-6 rounded-full bg-button text-black font-bold sm:hover:scale-110'>
                     <p>Login</p>
