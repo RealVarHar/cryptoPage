@@ -11,45 +11,51 @@ const Coins = () => {
   const [searchTextProxy, setSearchTextProxy] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [currency, setCurrency] = useState('usd');
+  const [price, setPrice] = useState(1)
+  const [usd, setUsd] = useState(1)
+  const [pln, setPln] = useState(undefined)
   const [sort, setSort] = useState('rankAsc');
 
   const url = document.location.origin+`/searchCoin`;//?vs_currency=${currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`
+  if (pln == undefined) axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=pln`).then(response => setPln(response.data.tether.pln))
+  
   if(window.cacheresponce==undefined)window.cacheresponce={name:"",response:""};
   useEffect(()=>{
     (async () => {
     setIsLoading(true);
+    
     let parameters={limit:250};
     if(searchText!="")parameters.name=searchText;
     let response=window.cacheresponce.response;
-      if(window.cacheresponce.name!=parameters.name||window.cacheresponce.response=="") response=await axios.post(url,parameters);
-      window.cacheresponce={name: parameters.name,response: {data:structuredClone(response.data)}};
-      let responsedata=response.data.slice(0,perPage);
-      for(let coin of responsedata){
-        coin.sparkline=Object.values(coin.sparkline).reduce((p,c)=>{p.push(...c);return p;},[]);
-        for(let key in coin.data){
-          coin[key]=coin.data[key];
-        }
-        coin.current_price=coin.price;
+    if(window.cacheresponce.name!=parameters.name||window.cacheresponce.response=="") response=await axios.post(url,parameters);
+    window.cacheresponce={name: parameters.name,response: {data:structuredClone(response.data)}};
+    let responsedata=response.data.slice(0,perPage);
+    for(let coin of responsedata){
+      coin.sparkline=Object.values(coin.sparkline).reduce((p,c)=>{p.push(...c);return p;},[]);
+      for(let key in coin.data){
+        coin[key]=coin.data[key];
       }
-      let sortby="",sortOrder=1;
-      if(sort=='rankAsc') {sortby="market_cap_rank"; sortOrder=1;}
-      if(sort=='rankDesc') {sortby="market_cap_rank"; sortOrder=-1;}
-      if(sort=='nameAsc') {sortby="name"; sortOrder=1;}
-      if(sort=='nameDesc') {sortby="name"; sortOrder=-1;}
-      if(sort=='priceAsc') {sortby="current_price"; sortOrder=1;}
-      if(sort=='priceDesc') {sortby="current_price"; sortOrder=-1;}
-      if(sort=='24HAsc') {sortby="price_change_percentage_24h_in_currency"; sortOrder=1;}
-      if(sort=='24HDesc') {sortby="price_change_percentage_24h_in_currency"; sortOrder=-1;}
-      if(sort=='7DAsc') {sortby="price_change_percentage_7d_in_currency"; sortOrder=1;}
-      if(sort=='7DDesc') {sortby="price_change_percentage_7d_in_currency"; sortOrder=-1;}
-      responsedata.sort((a,b) => {
-        if(a[sortby]===null&&b[sortby]===null) return 0;
-        if(a[sortby]===null) return 1;
-        if(b[sortby]===null) return -1;
-        return sortOrder*(a[sortby]-b[sortby]);
-      });
-      setCoins(responsedata);
-      setIsLoading(false);
+      coin.current_price=coin.price;
+    }
+    let sortby="",sortOrder=1;
+    if(sort=='rankAsc') {sortby="market_cap_rank"; sortOrder=1;}
+    if(sort=='rankDesc') {sortby="market_cap_rank"; sortOrder=-1;}
+    if(sort=='nameAsc') {sortby="name"; sortOrder=1;}
+    if(sort=='nameDesc') {sortby="name"; sortOrder=-1;}
+    if(sort=='priceAsc') {sortby="current_price"; sortOrder=1;}
+    if(sort=='priceDesc') {sortby="current_price"; sortOrder=-1;}
+    if(sort=='24HAsc') {sortby="price_change_percentage_24h_in_currency"; sortOrder=1;}
+    if(sort=='24HDesc') {sortby="price_change_percentage_24h_in_currency"; sortOrder=-1;}
+    if(sort=='7DAsc') {sortby="price_change_percentage_7d_in_currency"; sortOrder=1;}
+    if(sort=='7DDesc') {sortby="price_change_percentage_7d_in_currency"; sortOrder=-1;}
+    responsedata.sort((a,b) => {
+      if(a[sortby]===null&&b[sortby]===null) return 0;
+      if(a[sortby]===null) return 1;
+      if(b[sortby]===null) return -1;
+      return sortOrder*(a[sortby]-b[sortby]);
+    });
+    setCoins(responsedata);
+    setIsLoading(false);
 
   })()}, [url,searchText,perPage,sort] );
   
@@ -62,6 +68,10 @@ const Coins = () => {
       settypeWaiter(false);
     },1000));
   }, [searchTextProxy] );
+
+  useEffect(() => {
+    if (currency == 'usd') setPrice(usd); else setPrice(pln);
+  }, [currency])
 
   const handleChangePerPage = (event) => {
     setPerPage(event.target.value);
@@ -76,7 +86,7 @@ const Coins = () => {
   };
 
   const renderTable = (
-      <table className='w-full border-separate border-spacing-y-4'>
+      <table className='w-full border-separate border-spacing-y-4 text-[12px]'>
         <thead>
           <tr>
             <th className='pl-2'>#</th>
@@ -85,8 +95,8 @@ const Coins = () => {
             <th className='hidden sm:table-cell w-16'>1H</th>
             <th className='hidden sm:table-cell w-16'>24H</th>
             <th className='hidden sm:table-cell w-16'>7D</th>
-            <th className='hidden lg:table-cell text-right pr-3 w-36'>24H Volume</th>
-            <th className='hidden md:table-cell text-right pr-3 w-36'>Market Cap</th>
+            <th className='hidden lg:table-cell text-right pr-3 w-40'>24H Volume</th>
+            <th className='hidden md:table-cell text-right pr-3 w-40'>Market Cap</th>
             <th>Last 7 Days</th>
           </tr>
         </thead>
@@ -98,8 +108,8 @@ const Coins = () => {
                   <div className='flex items-center'>
                     <Link to={`/coin/${coin.id}`}>
                       <div className='ml-2 flex items-center hover:text-teal-400 dark:hover:text-[#FFD700]'>
-                        <img className='px-2' src={coin.image} alt={coin.id} width="50" />
-                        <div className='flex flex-col justify-center'>
+                        <img className='px-1' src={coin.image} alt={coin.id} width="45" />
+                        <div className='pl-1 flex flex-col justify-center'>
                           <p className='font-semibold'>{coin.name}</p>
                           <p className='text-[#949494]'>{coin.symbol.toUpperCase()}</p>
                         </div>
@@ -108,7 +118,7 @@ const Coins = () => {
                     <div></div>
                   </div>
                 </td>
-                <td className='text-right pr-3'>{coin.current_price > 1 ? coin.current_price.toLocaleString('pl-PL') : coin.current_price} {currency.toUpperCase()}</td>
+                <td className='text-right pr-3'>{coin.current_price*price > 1 ? (coin.current_price*price).toLocaleString('pl-PL') : coin.current_price*price} {currency.toUpperCase()}</td>
                 <td class="font-medium p-2 text-center hidden sm:table-cell">
                   {coin.price_change_percentage_1h_in_currency == null ? (
                     <p></p>
@@ -136,8 +146,8 @@ const Coins = () => {
                     <p class="text-red-600">{coin.price_change_percentage_7d_in_currency.toFixed(2)}%</p>
                   )}
                 </td>
-                <td class="p-2 text-right hidden lg:table-cell whitespace-nowrap">{(coin.total_volume==null?0:coin.total_volume).toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
-                <td class="p-2 text-right hidden md:table-cell whitespace-nowrap">{(coin.market_cap==null?0:coin.market_cap).toLocaleString('pl-PL')} {currency.toUpperCase()}</td>
+                <td class="p-2 text-right hidden lg:table-cell"><p>{(coin.total_volume==null?0:coin.total_volume*price).toLocaleString('pl-PL')} {currency.toUpperCase()}</p></td>
+                <td class="p-2 text-right hidden md:table-cell"><p>{(coin.market_cap==null?0:coin.market_cap*price).toLocaleString('pl-PL')} {currency.toUpperCase()}</p></td>
                 <td className=''>
                   {coin.price_change_percentage_7d_in_currency > 0 ? (
                     <Sparklines data={coin.sparkline}>

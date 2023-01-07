@@ -356,7 +356,7 @@ async function askforCoin(){
     fethes.running=false;
     fethes.clock=setTimeout(askforCoin,60000/fethes.max);
 }
-let fethes={used:0,max:10,maxrisk:1,clock:0,scheduled:[],running:false}
+let fethes={used:0,max:5,maxrisk:1,clock:0,scheduled:[],running:false}
 fethes.clock=setTimeout(askforCoin,60000/fethes.max);
 async function getDefault250(sorting,sorting_order){
     //returns names of any 250 sorted by marketcap
