@@ -62,6 +62,7 @@ app.addHook('preHandler',async (req,res) => {
     res.header('Access-Control-Allow-Origin','*');
     res.header('Access-Control-Allow-Methods','GET, POST');
     res.header('Access-Control-Allow-Headers','X-Requested-With,content-type, Authorization');
+    if(req.url=="/src/index.jsx")res.header('Set-Cookie',"SameSite=Strict; Secure");
 });
 
 await reactHandler.registerRoutes(app,appRoutes);
