@@ -52,7 +52,7 @@ const Coins = () => {
       if(a[sortby]===null&&b[sortby]===null) return 0;
       if(a[sortby]===null) return 1;
       if(b[sortby]===null) return -1;
-      return sortOrder*(a[sortby]-b[sortby]);
+      return sortOrder*(String(a[sortby]).localeCompare(String(b[sortby])));
     });
     setCoins(responsedata);
     setIsLoading(false);
