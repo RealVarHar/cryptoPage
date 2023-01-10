@@ -48,11 +48,12 @@ const Coins = () => {
     if(sort=='24HDesc') {sortby="price_change_percentage_24h_in_currency"; sortOrder=-1;}
     if(sort=='7DAsc') {sortby="price_change_percentage_7d_in_currency"; sortOrder=1;}
     if(sort=='7DDesc') {sortby="price_change_percentage_7d_in_currency"; sortOrder=-1;}
+    let collator=new Intl.Collator(undefined,{numeric: true,sensitivity: 'base'});
     responsedata.sort((a,b) => {
       if(a[sortby]===null&&b[sortby]===null) return 0;
       if(a[sortby]===null) return 1;
       if(b[sortby]===null) return -1;
-      return sortOrder*(String(a[sortby]).localeCompare(String(b[sortby])));
+      return sortOrder*collator.compare(String(a[sortby]),String(b[sortby]));
     });
     setCoins(responsedata);
     setIsLoading(false);
